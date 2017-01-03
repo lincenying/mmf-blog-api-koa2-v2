@@ -90,10 +90,10 @@ exports.insert = async ctx => {
         username = ctx.request.body.username
 
     if (fsExistsSync('./admin.lock')) {
-        return ctx.render('admin-add.html', {message: '请先把 admin.lock 删除'})
+        return ctx.render('admin-add', {message: '请先把 admin.lock 删除'})
     }
     if (!username || !password || !email) {
-        return ctx.render('admin-add.html', { message: '请将表单填写完整' })
+        return ctx.render('admin-add', { message: '请将表单填写完整' })
     }
     try {
         const payload = {}
@@ -112,9 +112,11 @@ exports.insert = async ctx => {
             await fs.writeFileSync('./admin.lock', username)
             payload.message = '添加用户成功: '+username+', 密码: '+password
         }
-        ctx.render('admin-add.html', payload)
+        return ctx.render('admin-add', payload)
     } catch (err) {
-        ctx.error(err.toString())
+        return ctx.render('admin-add', {
+            message: err.toString()
+        })
     }
 }
 
