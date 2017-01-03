@@ -89,35 +89,33 @@ exports.insert = async ctx => {
         password = ctx.request.body.password,
         username = ctx.request.body.username
 
+    const payload = {}
     if (fsExistsSync('./admin.lock')) {
-        return ctx.render('admin-add', {message: '请先把 admin.lock 删除'})
-    }
-    if (!username || !password || !email) {
-        return ctx.render('admin-add', { message: '请将表单填写完整' })
-    }
-    try {
-        const payload = {}
-        const result = await Admin.findOneAsync({ username })
-        if (result) {
-            payload.message = '该用户已经存在'
-        } else {
-            await Admin.createAsync({
-                username,
-                password: md5(md5Pre + password),
-                email,
-                creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
-                is_delete: 0,
-                timestamp: moment().format('X')
-            })
-            await fs.writeFileSync('./admin.lock', username)
-            payload.message = '添加用户成功: '+username+', 密码: '+password
+        payload.message = '请先把 admin.lock 删除'
+    } else if (!username || !password || !email) {
+        payload.message = '请将表单填写完整'
+    } else {
+        try {
+            const result = await Admin.findOneAsync({ username })
+            if (result) {
+                payload.message = '该用户已经存在'
+            } else {
+                await Admin.createAsync({
+                    username,
+                    password: md5(md5Pre + password),
+                    email,
+                    creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
+                    is_delete: 0,
+                    timestamp: moment().format('X')
+                })
+                await fs.writeFileSync('./admin.lock', username)
+                payload.message = '添加用户成功: '+username+', 密码: '+password
+            }
+        } catch (err) {
+            payload.message = err.toString()
         }
-        return ctx.render('admin-add', payload)
-    } catch (err) {
-        return ctx.render('admin-add', {
-            message: err.toString()
-        })
     }
+    await ctx.render('admin-add', payload)
 }
 
 /**
