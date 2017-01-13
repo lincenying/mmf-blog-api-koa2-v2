@@ -93,6 +93,7 @@ exports.deletes = async ctx => {
     var id = ctx.query.id
     try {
         await Comment.updateAsync({ _id: id }, { is_delete: 1 })
+        await Article.updateAsync({ _id: id }, { '$inc': { 'comment_count': -1 } })
         ctx.success('success', '删除成功')
     } catch (err) {
         ctx.error(err.toString())
