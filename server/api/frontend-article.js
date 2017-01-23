@@ -51,6 +51,10 @@ exports.getList = async ctx => {
         var arr = [],
             totalPage = Math.ceil(total / limit),
             user_id = ctx.cookies.get('userid')
+        lists = lists.map(item => {
+            item.content = item.content.substring(0, 500) + '...'
+            return item
+        })
         var tmpData = {
             list: lists,
             total,
