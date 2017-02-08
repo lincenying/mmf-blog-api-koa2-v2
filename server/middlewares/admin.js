@@ -6,7 +6,7 @@ module.exports = async (ctx, next) => {
         username = ctx.cookies.get('b_username') || ''
     username = new Buffer(username, 'base64').toString()
     if (token) {
-        const decoded = await check(token)
+        const decoded = await check(token, 'admin')
         if (decoded.id === userid && decoded.username === username) {
             ctx.decoded = decoded
             await next()
