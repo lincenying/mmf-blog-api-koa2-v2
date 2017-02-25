@@ -17,7 +17,7 @@ const deletes = general.deletes
 const recover = general.recover
 
 exports.getList = async ctx => {
-    list(ctx, User)
+    await list(ctx, User)
 }
 
 /**
