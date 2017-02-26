@@ -7,19 +7,21 @@ module.exports = async (ctx, next) => {
     username = new Buffer(username, 'base64').toString()
     if (token) {
         const decoded = await check(token, 'admin')
-        if (decoded.id === userid && decoded.username === username) {
+        if (decoded && decoded.id === userid && decoded.username === username) {
             ctx.decoded = decoded
             await next()
         } else {
             ctx.body = {
                 code: -500,
-                message: '登录验证失败'
+                message: '登录验证失败',
+                data: ''
             }
         }
     } else {
         ctx.body = {
             code: -500,
-            message: '请先登录'
+            message: '请先登录',
+            data: ''
         }
     }
 }
