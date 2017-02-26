@@ -95,7 +95,7 @@ exports.insert = async ctx => {
 }
 
 exports.getItem = async ctx => {
-    var userid = ctx.cookies.get('userid')
+    var userid = ctx.query.id || ctx.cookies.get('userid')
     try {
         const result = await User.findOneAsync({ _id: userid, is_delete: 0 })
         if (result) {
