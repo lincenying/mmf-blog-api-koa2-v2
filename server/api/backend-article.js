@@ -59,7 +59,8 @@ exports.insert = async ctx => {
         visit: 0,
         like: 0,
         comment_count: 0,
-        creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
+        creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         is_delete: 0,
         timestamp: moment().format('X')
     }
@@ -119,9 +120,10 @@ exports.modify = async ctx => {
         content = ctx.request.body.content,
         html = marked(content),
         id = ctx.request.body.id,
-        title = ctx.request.body.title
+        title = ctx.request.body.title,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     try {
-        await Article.updateAsync({ _id: id }, { '$set': { category, category_name, content, html, title } })
+        await Article.updateAsync({ _id: id }, { '$set': { category, category_name, content, html, title, update_date } })
         if (category !== category_old) {
             await Promise.all([
                 Category.updateAsync({ _id: category }, { '$inc': { 'cate_num': 1 } }),

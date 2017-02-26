@@ -38,7 +38,7 @@ exports.getList = async ctx => {
         var reg = new RegExp(key, 'i')
         data.title = {$regex : reg}
     }
-    var sort = '-_id'
+    var sort = '-update_date'
     if (by) {
         sort = '-' + by
     }

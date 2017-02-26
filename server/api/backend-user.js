@@ -104,7 +104,8 @@ exports.insert = async ctx => {
                     username,
                     password: md5(md5Pre + password),
                     email,
-                    creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
+                    creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
                     timestamp: moment().format('X')
                 })
@@ -128,9 +129,10 @@ exports.modify = async ctx => {
     var _id = ctx.request.body.id,
         email = ctx.request.body.email,
         password = ctx.request.body.password,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         username = ctx.request.body.username
     password = md5(md5Pre + password)
-    await modify(ctx, Admin, _id, { email, password, username })
+    await modify(ctx, Admin, _id, { email, password, username, update_date })
 }
 
 /**

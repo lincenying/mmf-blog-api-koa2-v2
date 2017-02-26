@@ -82,7 +82,8 @@ exports.insert = async ctx => {
                     username,
                     password: md5(md5Pre + password),
                     email,
-                    creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
+                    creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
                     timestamp: moment().format('X')
                 })
@@ -118,9 +119,10 @@ exports.modify = async ctx => {
     var _id = ctx.request.body.id,
         email = ctx.request.body.email,
         password = ctx.request.body.password,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         username = ctx.request.body.username
 
-    await modify(ctx, User, _id, { email, password, username })
+    await modify(ctx, User, _id, { email, password, username, update_date })
 }
 
 
@@ -133,11 +135,12 @@ exports.modify = async ctx => {
 exports.account = async ctx => {
     var _id = ctx.request.body.id,
         email = ctx.request.body.email,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         user_id = ctx.cookies.get('userid'),
         username = ctx.request.body.username
     if (user_id === _id) {
         try {
-            await User.updateAsync({ _id }, { '$set': { email, username } })
+            await User.updateAsync({ _id }, { '$set': { email, username, update_date } })
             ctx.success('success', '更新成功')
         } catch (err) {
             ctx.error(err.toString())
@@ -157,12 +160,13 @@ exports.password = async ctx => {
     var _id = ctx.request.body.id,
         old_password = ctx.request.body.old_password,
         password = ctx.request.body.password,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         user_id = ctx.cookies.get('userid')
     if (user_id === _id) {
         try {
             const result = await User.findOneAsync({ _id, password: md5(md5Pre + old_password), is_delete: 0 })
             if (result) {
-                await User.updateAsync({ _id }, { '$set': { password: md5(md5Pre + password) } })
+                await User.updateAsync({ _id }, { '$set': { password: md5(md5Pre + password), update_date } })
                 ctx.success('success', '更新成功')
             } else {
                 ctx.error('原始密码错误')

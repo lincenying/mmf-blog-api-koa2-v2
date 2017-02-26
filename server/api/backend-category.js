@@ -40,7 +40,8 @@ exports.insert = async ctx => {
             const result = await Category.createAsync({
                 cate_name,
                 cate_order,
-                creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
+                creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 is_delete: 0,
                 timestamp: moment().format('X')
             })
@@ -62,7 +63,8 @@ exports.recover = async ctx => {
 exports.modify = async ctx => {
     var _id = ctx.request.body.id,
         cate_name = ctx.request.body.cate_name,
-        cate_order = ctx.request.body.cate_order
+        cate_order = ctx.request.body.cate_order,
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss')
 
-    await modify(ctx, Category, _id, { cate_name, cate_order })
+    await modify(ctx, Category, _id, { cate_name, cate_order, update_date })
 }

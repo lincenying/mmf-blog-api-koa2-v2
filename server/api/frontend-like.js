@@ -9,8 +9,9 @@ exports.like = async ctx => {
     var data = {
         article_id,
         user_id,
-        creat_date: moment().format('YYYY-MM-DD HH:MM:SS'),
-        timestamp: moment().format('X')
+        creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+        timestamp: moment().format('X'),
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
     }
     try {
         const result = await Like.findOneAsync({ article_id, user_id })

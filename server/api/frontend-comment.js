@@ -12,9 +12,10 @@ var Article = mongoose.model('Article')
  */
 exports.insert = async ctx => {
     var content = ctx.request.body.content,
-        creat_date = moment().format('YYYY-MM-DD HH:MM:SS'),
+        creat_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         id = ctx.request.body.id,
         timestamp = moment().format('X'),
+        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         userid = ctx.cookies.get('userid'),
         username = ctx.cookies.get('username')
     username = new Buffer(username, 'base64').toString()
@@ -33,7 +34,8 @@ exports.insert = async ctx => {
         content,
         creat_date,
         is_delete: 0,
-        timestamp
+        timestamp,
+        update_date
     }
     try {
         const result = await Comment.createAsync(data)
