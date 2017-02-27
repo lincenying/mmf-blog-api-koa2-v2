@@ -121,8 +121,9 @@ exports.modify = async ctx => {
         password = ctx.request.body.password,
         update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         username = ctx.request.body.username
-
-    await modify(ctx, User, _id, { email, password, username, update_date })
+    var data = { email, username, update_date }
+    if (password) data.password = md5(md5Pre + password)
+    await modify(ctx, User, _id, data)
 }
 
 
