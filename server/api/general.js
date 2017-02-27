@@ -79,8 +79,8 @@ exports.deletes = async (ctx, mongoDB) => {
  */
 exports.modify = async (ctx, mongoDB, id, data) => {
     try {
-        await mongoDB.updateAsync({ _id: id }, { '$set': data })
-        ctx.success('success', '更新成功')
+        const result = await mongoDB.findOneAndUpdateAsync({ _id: id }, data, { new: true })
+        ctx.success(result, '更新成功')
     } catch (err) {
         ctx.error(err.toString())
     }

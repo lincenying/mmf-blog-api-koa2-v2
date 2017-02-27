@@ -123,14 +123,14 @@ exports.modify = async ctx => {
         title = ctx.request.body.title,
         update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     try {
-        await Article.updateAsync({ _id: id }, { '$set': { category, category_name, content, html, title, update_date } })
+        const result = await Article.findOneAndUpdateAsync({ _id: id }, { category, category_name, content, html, title, update_date }, { new: true })
         if (category !== category_old) {
             await Promise.all([
                 Category.updateAsync({ _id: category }, { '$inc': { 'cate_num': 1 } }),
                 Category.updateAsync({ _id: category_old }, { '$inc': { 'cate_num': -1 } })
             ])
         }
-        ctx.success('success', '更新成功')
+        ctx.success(result, '更新成功')
     } catch (err) {
         ctx.error(err.toString())
     }
