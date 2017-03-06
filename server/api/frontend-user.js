@@ -37,12 +37,8 @@ exports.login = async ctx => {
         if (result) {
             var id = result._id
             var remember_me = 2592000000
-            var token = jwt.sign({
-                id,
-                username
-            }, secret, {
-                expiresIn: 60*60*24*30
-            })
+            username = encodeURI(username)
+            var token = jwt.sign({id, username }, secret, {expiresIn: 60*60*24*30 })
             ctx.cookies.set('user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('userid', id, { maxAge: remember_me })
             ctx.cookies.set('username', new Buffer(username).toString('base64'), { maxAge: remember_me })

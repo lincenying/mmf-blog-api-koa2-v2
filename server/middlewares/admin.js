@@ -11,6 +11,9 @@ module.exports = async (ctx, next) => {
             ctx.decoded = decoded
             await next()
         } else {
+            ctx.cookies.set('b_user', '', { maxAge: 0, httpOnly: false })
+            ctx.cookies.set('b_userid', '', { maxAge: 0 })
+            ctx.cookies.set('b_username', '', { maxAge: 0 })
             ctx.body = {
                 code: -500,
                 message: '登录验证失败',
