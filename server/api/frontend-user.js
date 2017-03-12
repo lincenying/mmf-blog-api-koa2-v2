@@ -52,6 +52,19 @@ exports.login = async ctx => {
 }
 
 /**
+ * 用户登录
+ * @method logout
+ * @param  {[type]}   ctx [description]
+ * @return {[type]}       [description]
+ */
+exports.logout = async ctx => {
+    ctx.cookies.set('user', '', { maxAge: -1, httpOnly: false })
+    ctx.cookies.set('userid', '', { maxAge: -1 })
+    ctx.cookies.set('username', '', { maxAge: -1 })
+    ctx.success('', '退出成功')
+}
+
+/**
  * 用户注册
  * @method insert
  * @param  {[type]}    ctx  [description]
