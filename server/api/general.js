@@ -3,9 +3,11 @@
  * @method list
  * @param  {[type]} ctx     [description]
  * @param  {[type]} mongoDB [description]
+ * @param  {[type]} sort    排序
  * @return {[type]}         [description]
  */
-exports.list = async (ctx, mongoDB) => {
+exports.list = async (ctx, mongoDB, sort) => {
+    sort = sort || '-_id'
     var limit = ctx.query.limit,
         page = ctx.query.page
     page = parseInt(page, 10)
@@ -15,7 +17,7 @@ exports.list = async (ctx, mongoDB) => {
     var skip = (page - 1) * limit
     try {
         const [list, total] = await Promise.all([
-            mongoDB.find().sort('-_id').skip(skip).limit(limit).exec(),
+            mongoDB.find().sort(sort).skip(skip).limit(limit).exec(),
             mongoDB.countAsync()
         ])
         var totalPage = Math.ceil(total / limit)

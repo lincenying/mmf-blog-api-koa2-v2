@@ -23,7 +23,7 @@ marked.setOptions({
  * @return {[type]}     [description]
  */
 exports.getList = async ctx => {
-    await list(ctx, Article)
+    await list(ctx, Article, '-update_date')
 }
 
 /**
