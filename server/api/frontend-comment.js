@@ -18,6 +18,7 @@ exports.insert = async ctx => {
         update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         userid = ctx.cookies.get('userid'),
         username = ctx.cookies.get('username')
+    username = decodeURI(username)
     username = new Buffer(username, 'base64').toString()
     if (!id) {
         ctx.error('参数错误')
