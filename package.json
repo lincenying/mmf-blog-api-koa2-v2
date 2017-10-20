@@ -1,35 +1,36 @@
 {
   "name": "mmf-blog-api-koa2-v2",
   "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "start": "./node_modules/.bin/nodemon bin/run",
     "koa": "./node_modules/.bin/runkoa bin/www",
     "pm2": "pm2 start bin/run "
   },
   "dependencies": {
-    "debug": "^2.6.8",
-    "ejs": "^2.5.6",
+    "debug": "^3.1.0",
+    "ejs": "^2.5.7",
     "highlight.js": "^9.12.0",
     "jade": "~1.11.0",
-    "jsonwebtoken": "^7.4.1",
+    "jsonwebtoken": "^8.1.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
     "koa-json": "^2.0.2",
-    "koa-logger": "^3.0.1",
+    "koa-logger": "^3.1.0",
     "koa-onerror": "^3.0.1",
     "koa-router": "^7.2.1",
-    "koa-static": "^4.0.0",
-    "koa-views": "^6.0.2",
+    "koa-static": "^4.0.1",
+    "koa-views": "^6.1.1",
     "marked": "^0.3.6",
     "md5": "^2.2.1",
-    "moment": "^2.18.1",
-    "mongoose": "^4.11.1",
+    "moment": "^2.19.1",
+    "mongoose": "^4.12.3",
     "runkoa": "^1.5.2"
   },
   "devDependencies": {
-    "nodemon": "^1.9.1",
-    "should": "^11.1.2"
+    "nodemon": "^1.12.1",
+    "should": "^13.1.2"
   },
   "engines": {
     "node": ">=7.6"
