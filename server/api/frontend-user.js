@@ -52,6 +52,60 @@ exports.login = async ctx => {
 }
 
 /**
+ * 微信登录
+ * @method wxLogin
+ * @param  {[type]}   ctx [description]
+ * @return {[type]}       [description]
+ */
+exports.wxLogin = async ctx => {
+    let json = {}
+    const { nickName, wxSignature, avatar } = ctx.request.body
+    if (!nickName || !wxSignature) {
+        ctx.error('参数有误, 微信登录失败')
+    } else {
+        try {
+            const result = await User.findOneAsync({
+                username: nickName,
+                wx_signature: wxSignature,
+                is_delete: 0
+            })
+            if (result) {
+                var id = result._id
+                var username = encodeURI(nickName)
+                var token = jwt.sign({ id, username }, secret, { expiresIn: 60*60*24*30 })
+                ctx.success({
+                    user: token,
+                    userid: id,
+                    username,
+                }, '登录成功')
+            } else {
+                const _result = await User.createAsync({
+                    username: nickName,
+                    password: '',
+                    email: '',
+                    creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    is_delete: 0,
+                    timestamp: moment().format('X'),
+                    wx_avatar: avatar,
+                    wx_signature: wxSignature,
+                })
+                var username = encodeURI(nickName)
+                var id = _result._id
+                var token = jwt.sign({ id, username }, secret, { expiresIn: 60*60*24*30 })
+                ctx.success({
+                    user: token,
+                    userid: id,
+                    username,
+                }, '注册成功')
+            }
+        } catch (err) {
+            ctx.error(err.toString())
+        }
+    }
+}
+
+/**
  * 用户登录
  * @method logout
  * @param  {[type]}   ctx [description]
@@ -105,7 +159,7 @@ exports.insert = async ctx => {
 }
 
 exports.getItem = async ctx => {
-    var userid = ctx.query.id || ctx.cookies.get('userid')
+    var userid = ctx.query.id || ctx.cookies.get('userid') || ctx.header['userid']
     try {
         const result = await User.findOneAsync({ _id: userid, is_delete: 0 })
         if (result) {
@@ -146,8 +200,8 @@ exports.account = async ctx => {
     var _id = ctx.request.body.id,
         email = ctx.request.body.email,
         update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        user_id = ctx.cookies.get('userid'),
-        username = ctx.request.body.username
+        user_id = ctx.cookies.get('userid') || ctx.header['userid'],
+        username = ctx.request.body.username || ctx.header['username']
     if (user_id === _id) {
         try {
             await User.updateAsync({ _id }, { '$set': { email, username, update_date } })
@@ -171,7 +225,7 @@ exports.password = async ctx => {
         old_password = ctx.request.body.old_password,
         password = ctx.request.body.password,
         update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        user_id = ctx.cookies.get('userid')
+        user_id = ctx.cookies.get('userid') || ctx.header['userid']
     if (user_id === _id) {
         try {
             const result = await User.findOneAsync({ _id, password: md5(md5Pre + old_password), is_delete: 0 })

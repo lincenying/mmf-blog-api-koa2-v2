@@ -50,7 +50,7 @@ exports.getList = async ctx => {
         ])
         var arr = [],
             totalPage = Math.ceil(total / limit),
-            user_id = ctx.cookies.get('userid')
+            user_id = ctx.cookies.get('userid') || ctx.header['userid']
         lists = lists.map(item => {
             item.content = item.content.substring(0, 500) + '...'
             return item
@@ -94,7 +94,7 @@ exports.getList = async ctx => {
 
 exports.getItem = async ctx => {
     var _id = ctx.query.id,
-        user_id = ctx.cookies.get('userid')
+        user_id = ctx.cookies.get('userid') || ctx.header['userid']
     if (!_id) {
         ctx.error('参数错误')
         return

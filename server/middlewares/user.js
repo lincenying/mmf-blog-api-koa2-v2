@@ -1,9 +1,9 @@
 var check = require('./check')
 
 module.exports = async (ctx, next) => {
-    var token = ctx.cookies.get('user'),
-        userid = ctx.cookies.get('userid'),
-        username = ctx.cookies.get('username') || ''
+    var token = ctx.cookies.get('user') || ctx.header['user'],
+        userid = ctx.cookies.get('userid') || ctx.header['userid'],
+        username = ctx.cookies.get('username') || ctx.header['username'] || ''
     username = new Buffer(username, 'base64').toString()
     if (token) {
         const decoded = await check(token, 'user')

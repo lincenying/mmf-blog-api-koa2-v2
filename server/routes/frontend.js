@@ -24,6 +24,8 @@ router.get('/comment/list', frontendComment.getList)
 router.post('/user/insert', frontendUser.insert)
 // 前台登录
 router.post('/user/login', frontendUser.login)
+// 微信登录
+router.post('/user/wxLogin', frontendUser.wxLogin)
 // 前台退出
 router.post('/user/logout', isUser, frontendUser.logout)
 // 前台账号读取

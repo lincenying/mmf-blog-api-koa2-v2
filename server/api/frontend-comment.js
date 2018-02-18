@@ -11,15 +11,16 @@ var Article = mongoose.model('Article')
  * @return {[type]}     [description]
  */
 exports.insert = async ctx => {
-    var content = ctx.request.body.content,
+    var avatar = ctx.request.body.avatar || '',
+        content = ctx.request.body.content,
         creat_date = moment().format('YYYY-MM-DD HH:mm:ss'),
         id = ctx.request.body.id,
         timestamp = moment().format('X'),
         update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        userid = ctx.cookies.get('userid'),
-        username = ctx.cookies.get('username')
-    username = decodeURI(username)
+        userid = ctx.cookies.get('userid') || ctx.header['userid'],
+        username = ctx.cookies.get('username') || ctx.header['username']
     username = new Buffer(username, 'base64').toString()
+    username = decodeURI(username)
     if (!id) {
         ctx.error('参数错误')
         return
@@ -28,6 +29,7 @@ exports.insert = async ctx => {
         return
     }
     var data = {
+        avatar,
         article_id: id,
         userid,
         username,

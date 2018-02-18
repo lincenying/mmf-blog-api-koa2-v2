@@ -5,7 +5,7 @@ var Like = mongoose.model('Like')
 
 exports.like = async ctx => {
     var article_id = ctx.query.id
-    var user_id = ctx.cookies.get('userid')
+    var user_id = ctx.cookies.get('userid') || ctx.header['userid']
     var data = {
         article_id,
         user_id,
@@ -29,7 +29,7 @@ exports.like = async ctx => {
 
 exports.unlike = async ctx => {
     var article_id = ctx.query.id
-    var user_id = ctx.cookies.get('userid')
+    var user_id = ctx.cookies.get('userid') || ctx.header['userid']
     try {
         await Like.removeAsync({ article_id, user_id })
         await Article.updateAsync({ _id: article_id }, { '$inc': { 'like': -1 } })
