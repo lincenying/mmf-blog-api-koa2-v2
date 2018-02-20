@@ -1,6 +1,6 @@
-var moment = require('moment')
-var mongoose = require('../mongoose')
-var Category = mongoose.model('Category')
+const moment = require('moment')
+const mongoose = require('../mongoose')
+const Category = mongoose.model('Category')
 const general = require('./general')
 
 const item = general.item
@@ -30,9 +30,7 @@ exports.getItem = async ctx => {
 }
 
 exports.insert = async ctx => {
-    var cate_name = ctx.request.body.cate_name,
-        cate_order = ctx.request.body.cate_order
-
+    const { cate_name, cate_order } = ctx.request.body
     if (!cate_name || !cate_order) {
         ctx.error('请填写分类名称和排序')
     } else {
@@ -61,10 +59,7 @@ exports.recover = async ctx => {
 }
 
 exports.modify = async ctx => {
-    var _id = ctx.request.body.id,
-        cate_name = ctx.request.body.cate_name,
-        cate_order = ctx.request.body.cate_order,
-        update_date = moment().format('YYYY-MM-DD HH:mm:ss')
-
-    await modify(ctx, Category, _id, { cate_name, cate_order, update_date })
+    const { id, cate_name, cate_order } = ctx.request.body
+    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    await modify(ctx, Category, id, { cate_name, cate_order, update_date })
 }

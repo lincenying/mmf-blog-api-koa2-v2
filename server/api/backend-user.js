@@ -1,21 +1,16 @@
-var md5 = require('md5')
-var fs = require('fs')
-var moment = require('moment')
-var jwt = require('jsonwebtoken')
+const md5 = require('md5')
+const fs = require('fs')
+const moment = require('moment')
+const jwt = require('jsonwebtoken')
 
-var mongoose = require('../mongoose')
-var Admin = mongoose.model('Admin')
-var fsExistsSync = require('../utils').fsExistsSync
-var config = require('../config')
-var md5Pre = config.md5Pre
-var secret = config.secretServer
+const mongoose = require('../mongoose')
+const Admin = mongoose.model('Admin')
+const fsExistsSync = require('../utils').fsExistsSync
+const config = require('../config')
+const md5Pre = config.md5Pre
+const secret = config.secretServer
 const general = require('./general')
-
-const list = general.list
-const item = general.item
-const modify = general.modify
-const deletes = general.deletes
-const recover = general.recover
+const { list, item, modify, deletes, recover } = general
 
 /**
  * 获取管理员列表
@@ -44,8 +39,7 @@ exports.getItem = async ctx => {
  * @return {[type]}       [description]
  */
 exports.login = async ctx => {
-    var password = ctx.request.body.password,
-        username = ctx.request.body.username
+    const { password, username } = ctx.request.body
     if (username === '' || password === '') {
         ctx.error('请输入用户名和密码')
         return
@@ -57,13 +51,13 @@ exports.login = async ctx => {
             is_delete: 0
         })
         if (result) {
-            var id = result._id
-            var remember_me = 2592000000
-            username = encodeURI(username)
-            var token = jwt.sign({id, username }, secret, {expiresIn: 60*60*24*30 })
+            const id = result._id
+            const remember_me = 2592000000
+            const _username = encodeURI(username)
+            const token = jwt.sign({id, _username }, secret, {expiresIn: 60*60*24*30 })
             ctx.cookies.set('b_user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('b_userid', id, { maxAge: remember_me })
-            ctx.cookies.set('b_username', new Buffer(username).toString('base64'), { maxAge: remember_me })
+            ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
             ctx.success(token, '登录成功')
         } else {
             ctx.error('用户名或者密码错误')
@@ -81,10 +75,7 @@ exports.login = async ctx => {
  * @return {json}         [description]
  */
 exports.insert = async ctx => {
-    var email = ctx.request.body.email,
-        password = ctx.request.body.password,
-        username = ctx.request.body.username
-
+    const { email, password, username } = ctx.request.body
     const payload = {}
     if (fsExistsSync('./admin.lock')) {
         payload.message = '请先把 admin.lock 删除'
@@ -122,14 +113,11 @@ exports.insert = async ctx => {
  * @return {[type]}        [description]
  */
 exports.modify = async ctx => {
-    var _id = ctx.request.body.id,
-        email = ctx.request.body.email,
-        password = ctx.request.body.password,
-        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        username = ctx.request.body.username
-    var data = { email, username, update_date }
+    const { id, email, password, username } = ctx.request.body
+    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    const data = { email, username, update_date }
     if (password) data.password = md5(md5Pre + password)
-    await modify(ctx, Admin, _id, data)
+    await modify(ctx, Admin, id, data)
 }
 
 /**

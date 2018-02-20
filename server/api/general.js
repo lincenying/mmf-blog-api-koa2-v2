@@ -8,8 +8,7 @@
  */
 exports.list = async (ctx, mongoDB, sort) => {
     sort = sort || '-_id'
-    var limit = ctx.query.limit,
-        page = ctx.query.page
+    let { limit, page } = ctx.query
     page = parseInt(page, 10)
     limit = parseInt(limit, 10)
     if (!page) page = 1
@@ -40,13 +39,13 @@ exports.list = async (ctx, mongoDB, sort) => {
  * @return {[type]}         [description]
  */
 exports.item = async (ctx, mongoDB) => {
-    var id = ctx.query.id
-    if (!id) {
+    const _id = ctx.query.id
+    if (!_id) {
         ctx.error('参数错误')
         return
     }
     try {
-        const result = await mongoDB.findOneAsync({ _id: id })
+        const result = await mongoDB.findOneAsync({ _id })
         ctx.success(result)
     } catch (err) {
         ctx.error(err.toString())
@@ -61,9 +60,9 @@ exports.item = async (ctx, mongoDB) => {
  * @return {[type]}         [description]
  */
 exports.deletes = async (ctx, mongoDB) => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await mongoDB.updateAsync({ _id: id }, { is_delete: 1 })
+        await mongoDB.updateAsync({ _id }, { is_delete: 1 })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -75,13 +74,13 @@ exports.deletes = async (ctx, mongoDB) => {
  * @method modify
  * @param  {[type]} ctx     [description]
  * @param  {[type]} mongoDB [description]
- * @param  {[type]} id      [description]
+ * @param  {[type]} _id     [description]
  * @param  {[type]} data    [description]
  * @return {[type]}         [description]
  */
-exports.modify = async (ctx, mongoDB, id, data) => {
+exports.modify = async (ctx, mongoDB, _id, data) => {
     try {
-        const result = await mongoDB.findOneAndUpdateAsync({ _id: id }, data, { new: true })
+        const result = await mongoDB.findOneAndUpdateAsync({ _id }, data, { new: true })
         ctx.success(result, '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -96,9 +95,9 @@ exports.modify = async (ctx, mongoDB, id, data) => {
  * @return {[type]}         [description]
  */
 exports.recover = async (ctx, mongoDB) => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await mongoDB.updateAsync({ _id: id }, { is_delete: 0 })
+        await mongoDB.updateAsync({ _id }, { is_delete: 0 })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())

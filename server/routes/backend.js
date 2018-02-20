@@ -1,10 +1,10 @@
 const router = require('koa-router')()
-const backendArticle = require('../api/backend-article'),
-    backendCategory = require('../api/backend-category'),
-    backendUser = require('../api/backend-user'),
-    frontendComment = require('../api/frontend-comment'),
-    frontendUser = require('../api/frontend-user'),
-    isAdmin = require('../middlewares/admin')
+const backendArticle = require('../api/backend-article')
+const backendCategory = require('../api/backend-category')
+const backendUser = require('../api/backend-user')
+const frontendComment = require('../api/frontend-comment')
+const frontendUser = require('../api/frontend-user')
+const isAdmin = require('../middlewares/admin')
 
 // API
 // ================ 后台 ================

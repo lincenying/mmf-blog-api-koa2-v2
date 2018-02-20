@@ -1,9 +1,8 @@
-var mongoose = require('../mongoose')
-var Article = mongoose.model('Article')
-var Like = mongoose.model('Like')
+const mongoose = require('../mongoose')
+const Article = mongoose.model('Article')
 
-// var marked = require('marked')
-// var hljs = require('highlight.js')
+// const marked = require('marked')
+// const hljs = require('highlight.js')
 // marked.setOptions({
 //     highlight(code) {
 //         return hljs.highlightAuto(code).value
@@ -18,16 +17,13 @@ var Like = mongoose.model('Like')
  * @return {[type]}     [description]
  */
 exports.getList = async ctx => {
-    var by = ctx.query.by,
-        id = ctx.query.id,
-        key = ctx.query.key,
-        limit = ctx.query.limit,
-        page = ctx.query.page
+    const { by, id, key } = ctx.query
+    let { limit, page } = ctx.query
     page = parseInt(page, 10)
     limit = parseInt(limit, 10)
     if (!page) page = 1
     if (!limit) limit = 10
-    var data = {
+    const data = {
             is_delete: 0
         },
         skip = (page - 1) * limit
@@ -35,46 +31,40 @@ exports.getList = async ctx => {
         data.category = id
     }
     if (key) {
-        var reg = new RegExp(key, 'i')
+        const reg = new RegExp(key, 'i')
         data.title = {$regex : reg}
     }
-    var sort = '-update_date'
+    let sort = '-update_date'
     if (by) {
         sort = '-' + by
     }
 
     try {
-        var [lists, total] = await Promise.all([
+        const [list, total] = await Promise.all([
             Article.find(data).sort(sort).skip(skip).limit(limit).exec(),
             Article.countAsync(data)
         ])
-        var arr = [],
-            totalPage = Math.ceil(total / limit),
-            user_id = ctx.cookies.get('userid') || ctx.header['userid']
-        lists = lists.map(item => {
-            item.content = item.content.substring(0, 500) + '...'
-            return item
-        })
-        var tmpData = {
-            list: lists,
+        const totalPage = Math.ceil(total / limit)
+        const user_id = ctx.cookies.get('userid') || ctx.header['userid']
+        const tmpData = {
             total,
             hasNext: totalPage > page ? 1 : 0,
             hasPrev: page > 1
         }
         if (user_id) {
-            lists.forEach(item => {
-                arr.push(Like.findOneAsync({ article_id: item._id, user_id }))
-            })
-            const collection = await Promise.all(arr)
-            lists = lists.map((item, index) => {
-                item._doc.like_status = !!collection[index]
+            const lists = list.map(item => {
+                item.content = item.content.substring(0, 500) + '...'
+                item._doc.like_status = item.likes.indexOf(user_id) > -1
+                item.likes = []
                 return item
             })
             tmpData.list = lists
             ctx.success(tmpData)
         } else {
-            lists = lists.map(item => {
+            const lists = list.map(item => {
+                item.content = item.content.substring(0, 500) + '...'
                 item._doc.like_status = false
+                item.likes = []
                 return item
             })
             tmpData.list = lists
@@ -93,23 +83,23 @@ exports.getList = async ctx => {
  */
 
 exports.getItem = async ctx => {
-    var _id = ctx.query.id,
-        user_id = ctx.cookies.get('userid') || ctx.header['userid']
+    const _id = ctx.query.id
+    const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     if (!_id) {
         ctx.error('参数错误')
         return
     }
     try {
-        const [article, like, ] = await Promise.all([
+        const [article, ] = await Promise.all([
             Article.findOneAsync({ _id, is_delete: 0 }),
-            Like.findOneAsync({ article_id: _id, user_id }),
             Article.updateAsync({ _id }, { '$inc':{ 'visit': 1 } })
         ])
         if (!article) {
             ctx.error('没有找到该文章')
         } else {
-            if (user_id) article._doc.like_status = !! like
+            if (user_id) article._doc.like_status = article.likes.indexOf(user_id) > -1
             else article._doc.like_status = false
+            article.likes = []
             ctx.success(article)
         }
     } catch (err) {
@@ -118,8 +108,8 @@ exports.getItem = async ctx => {
 }
 
 exports.getTrending = async ctx => {
-    var limit = 5
-    var data = { is_delete: 0 }
+    const limit = 5
+    const data = { is_delete: 0 }
     try {
         const result = await Article.find(data).sort('-visit').limit(limit).exec()
         ctx.success({

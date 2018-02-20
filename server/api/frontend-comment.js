@@ -1,8 +1,7 @@
-var moment = require('moment')
-
-var mongoose = require('../mongoose')
-var Comment = mongoose.model('Comment')
-var Article = mongoose.model('Article')
+const moment = require('moment')
+const mongoose = require('../mongoose')
+const Comment = mongoose.model('Comment')
+const Article = mongoose.model('Article')
 
 /**
  * 发布评论
@@ -11,16 +10,7 @@ var Article = mongoose.model('Article')
  * @return {[type]}     [description]
  */
 exports.insert = async ctx => {
-    var avatar = ctx.request.body.avatar || '',
-        content = ctx.request.body.content,
-        creat_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        id = ctx.request.body.id,
-        timestamp = moment().format('X'),
-        update_date = moment().format('YYYY-MM-DD HH:mm:ss'),
-        userid = ctx.cookies.get('userid') || ctx.header['userid'],
-        username = ctx.cookies.get('username') || ctx.header['username']
-    username = new Buffer(username, 'base64').toString()
-    username = decodeURI(username)
+    const { id, content } = ctx.request.body
     if (!id) {
         ctx.error('参数错误')
         return
@@ -28,7 +18,15 @@ exports.insert = async ctx => {
         ctx.error('请输入评论内容')
         return
     }
-    var data = {
+    const avatar = ctx.request.body.avatar || ''
+    const creat_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    const timestamp = moment().format('X')
+    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    const userid = ctx.cookies.get('userid') || ctx.header['userid']
+    let username = ctx.cookies.get('username') || ctx.header['username']
+    username = new Buffer(username, 'base64').toString()
+    username = decodeURI(username)
+    const data = {
         avatar,
         article_id: id,
         userid,
@@ -56,10 +54,8 @@ exports.insert = async ctx => {
  * @return {[type]}     [description]
  */
 exports.getList = async ctx => {
-    var all = ctx.query.all,
-        id = ctx.query.id,
-        limit = ctx.query.limit,
-        page = ctx.query.page
+    const { all, id } = ctx.query
+    let { limit, page } = ctx.query
     if (!id) {
         ctx.error('参数错误')
     } else {
@@ -67,7 +63,7 @@ exports.getList = async ctx => {
         limit = parseInt(limit, 10)
         if (!page) page = 1
         if (!limit) limit = 10
-        var data = {
+        const data = {
                 article_id: id
             },
             skip = (page - 1) * limit
@@ -79,7 +75,7 @@ exports.getList = async ctx => {
                 Comment.find(data).sort('-_id').skip(skip).limit(limit).exec(),
                 Comment.countAsync(data)
             ])
-            var totalPage = Math.ceil(total / limit)
+            const totalPage = Math.ceil(total / limit)
             ctx.success({
                 list,
                 total,
@@ -98,10 +94,10 @@ exports.getList = async ctx => {
  * @return {[type]}        [description]
  */
 exports.deletes = async ctx => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await Comment.updateAsync({ _id: id }, { is_delete: 1 })
-        await Article.updateAsync({ _id: id }, { '$inc': { 'comment_count': -1 } })
+        await Comment.updateAsync({ _id }, { is_delete: 1 })
+        await Article.updateAsync({ _id }, { '$inc': { 'comment_count': -1 } })
         ctx.success('success', '删除成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -115,10 +111,10 @@ exports.deletes = async ctx => {
  * @return {[type]}        [description]
  */
 exports.recover = async ctx => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await Comment.updateAsync({ _id: id }, { is_delete: 0 })
-        await Article.updateAsync({ _id: id }, { '$inc': { 'comment_count': 1 } })
+        await Comment.updateAsync({ _id }, { is_delete: 0 })
+        await Article.updateAsync({ _id }, { '$inc': { 'comment_count': 1 } })
         ctx.success('success', '恢复成功')
     } catch (err) {
         ctx.error(err.toString())

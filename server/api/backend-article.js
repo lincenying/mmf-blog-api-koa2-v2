@@ -1,14 +1,11 @@
-var moment = require('moment')
-var mongoose = require('../mongoose')
-var Article = mongoose.model('Article')
-var Category = mongoose.model('Category')
+const moment = require('moment')
+const mongoose = require('../mongoose')
+const Article = mongoose.model('Article')
+const Category = mongoose.model('Category')
 const general = require('./general')
-
-const list = general.list
-const item = general.item
-
-var marked = require('marked')
-var hljs = require('highlight.js')
+const { list, item } = general
+const marked = require('marked')
+const hljs = require('highlight.js')
 marked.setOptions({
     highlight(code) {
         return hljs.highlightAuto(code).value
@@ -43,17 +40,13 @@ exports.getItem = async ctx => {
  * @return {[type]}     [description]
  */
 exports.insert = async ctx => {
-    var categorys = ctx.request.body.category,
-        content = ctx.request.body.content,
-        html = marked(content),
-        title = ctx.request.body.title
-    var arr_category = categorys.split("|")
-    var category = arr_category[0]
-    var category_name = arr_category[1]
-    var data = {
+    const { category, content, title } = ctx.request.body
+    const html = marked(content)
+    const arr_category = category.split("|")
+    const data = {
         title,
-        category,
-        category_name,
+        category: arr_category[0],
+        category_name: arr_category[1],
         content,
         html,
         visit: 0,
@@ -80,10 +73,10 @@ exports.insert = async ctx => {
  * @return {[type]}     [description]
  */
 exports.deletes = async ctx => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await Article.updateAsync({ _id: id }, { is_delete: 1 })
-        await Category.updateAsync({ _id: id }, { '$inc': { 'cate_num': -1 } })
+        await Article.updateAsync({ _id }, { is_delete: 1 })
+        await Category.updateAsync({ _id }, { '$inc': { 'cate_num': -1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -97,10 +90,10 @@ exports.deletes = async ctx => {
  * @return {[type]}     [description]
  */
 exports.recover = async ctx => {
-    var id = ctx.query.id
+    const _id = ctx.query.id
     try {
-        await Article.updateAsync({ _id: id }, { is_delete: 0 })
-        await Category.updateAsync({ _id: id }, { '$inc': { 'cate_num': 1 } })
+        await Article.updateAsync({ _id }, { is_delete: 0 })
+        await Category.updateAsync({ _id }, { '$inc': { 'cate_num': 1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -114,14 +107,9 @@ exports.recover = async ctx => {
  * @return {[type]}     [description]
  */
 exports.modify = async ctx => {
-    var category = ctx.request.body.category,
-        category_name = ctx.request.body.category_name,
-        category_old = ctx.request.body.category_old,
-        content = ctx.request.body.content,
-        html = marked(content),
-        id = ctx.request.body.id,
-        title = ctx.request.body.title,
-        update_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    const { id, title, category, category_name, category_old, content } = ctx.request.body
+    const html = marked(content)
+    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     try {
         const result = await Article.findOneAndUpdateAsync({ _id: id }, { category, category_name, content, html, title, update_date }, { new: true })
         if (category !== category_old) {

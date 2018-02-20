@@ -1,38 +1,32 @@
-var moment = require('moment')
-var mongoose = require('../mongoose')
-var Article = mongoose.model('Article')
-var Like = mongoose.model('Like')
+const mongoose = require('../mongoose')
+const Article = mongoose.model('Article')
 
 exports.like = async ctx => {
-    var article_id = ctx.query.id
-    var user_id = ctx.cookies.get('userid') || ctx.header['userid']
-    var data = {
-        article_id,
-        user_id,
-        creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-        timestamp: moment().format('X'),
-        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
-    }
+    const article_id = ctx.query.id
+    const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     try {
-        const result = await Like.findOneAsync({ article_id, user_id })
-        if (result) {
-            ctx.error('你已经赞过了')
-        } else {
-            await Like.createAsync(data)
-            await Article.updateAsync({ _id: article_id }, { '$inc': { 'like': 1 } })
-            ctx.success('success', '更新成功')
-        }
+        await Article.updateAsync({ _id: article_id }, { '$inc': { 'like': 1 }, '$push':{ 'likes': user_id } })
+        ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
     }
 }
-
 exports.unlike = async ctx => {
-    var article_id = ctx.query.id
-    var user_id = ctx.cookies.get('userid') || ctx.header['userid']
+    const article_id = ctx.query.id
+    const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     try {
-        await Like.removeAsync({ article_id, user_id })
-        await Article.updateAsync({ _id: article_id }, { '$inc': { 'like': -1 } })
+        await Article.updateAsync({ _id: article_id }, { '$inc': { 'like': -1 }, '$pull':{ 'likes': user_id } })
+        ctx.success('success', '更新成功')
+    } catch (err) {
+        ctx.error(err.toString())
+    }
+}
+exports.resetLike = async ctx => {
+    try {
+        const result = await Article.find().exec()
+        result.forEach(item => {
+            Article.findOneAndUpdateAsync({ _id: item._id }, { like: item.likes.length }, { new: true })
+        })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())

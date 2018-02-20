@@ -1,9 +1,9 @@
-var check = require('./check')
+const check = require('./check')
 
 module.exports = async (ctx, next) => {
-    var token = ctx.cookies.get('b_user'),
-        userid = ctx.cookies.get('b_userid'),
-        username = ctx.cookies.get('b_username') || ''
+    const token = ctx.cookies.get('b_user')
+    const userid = ctx.cookies.get('b_userid')
+    let username = ctx.cookies.get('b_username') || ''
     username = new Buffer(username, 'base64').toString()
     if (token) {
         const decoded = await check(token, 'admin')

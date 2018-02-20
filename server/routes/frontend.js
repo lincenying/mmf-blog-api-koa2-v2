@@ -1,9 +1,9 @@
 const router = require('koa-router')()
-const frontendArticle = require('../api/frontend-article'),
-    frontendComment = require('../api/frontend-comment'),
-    frontendLike = require('../api/frontend-like'),
-    frontendUser = require('../api/frontend-user'),
-    isUser = require('../middlewares/user')
+const frontendArticle = require('../api/frontend-article')
+const frontendComment = require('../api/frontend-comment')
+const frontendLike = require('../api/frontend-like')
+const frontendUser = require('../api/frontend-user')
+const isUser = require('../middlewares/user')
 
 // API
 // ================= 前台 =================
@@ -39,5 +39,7 @@ router.post('/user/password', isUser, frontendUser.password)
 router.get('/like', isUser, frontendLike.like)
 // 取消喜欢
 router.get('/unlike', isUser, frontendLike.unlike)
+// 重置喜欢
+router.get('/reset/like', isUser, frontendLike.resetLike)
 
 module.exports = router

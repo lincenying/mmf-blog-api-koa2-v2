@@ -13,7 +13,6 @@ require('./server/models/admin')
 require('./server/models/article')
 require('./server/models/category')
 require('./server/models/comment')
-require('./server/models/like')
 require('./server/models/user')
 
 const index = require('./server/routes/index')
