@@ -22,7 +22,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.2",
     "koa-views": "^6.1.3",
-    "marked": "^0.3.12",
+    "marked": "^0.3.15",
     "md5": "^2.2.1",
     "moment": "^2.20.1",
     "mongoose": "^5.0.4",
@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "eslint-config-lcy-vue": "^2.1.1",
-    "nodemon": "^1.14.12",
+    "nodemon": "^1.15.1",
     "should": "^13.2.1"
   },
   "engines": {

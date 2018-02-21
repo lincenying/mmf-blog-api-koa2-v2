@@ -2619,9 +2619,9 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-marked@^0.3.12:
-  version "0.3.14"
-  resolved "http://registry.npm.taobao.org/marked/download/marked-0.3.14.tgz#42375c23e206b95fdd497dd1d2f33ae4d1cf3d6c"
+marked@^0.3.15:
+  version "0.3.15"
+  resolved "http://registry.npm.taobao.org/marked/download/marked-0.3.15.tgz#de96982e54c880962f5093a2fa93d0866bf73668"
 
 md5@^2.2.1:
   version "2.2.1"
@@ -2823,9 +2823,9 @@ node-pre-gyp@^0.6.39:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
-nodemon@^1.14.12:
-  version "1.15.0"
-  resolved "http://registry.npm.taobao.org/nodemon/download/nodemon-1.15.0.tgz#ddec01eeb9c33d53dfbf7eddb2fa32f723474c1e"
+nodemon@^1.15.1:
+  version "1.15.1"
+  resolved "http://registry.npm.taobao.org/nodemon/download/nodemon-1.15.1.tgz#54daa72443d8d5a548f130866b92e65cded0ed58"
   dependencies:
     chokidar "^2.0.2"
     debug "^3.1.0"
