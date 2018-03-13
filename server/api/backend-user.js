@@ -54,7 +54,7 @@ exports.login = async ctx => {
             const id = result._id
             const remember_me = 2592000000
             const _username = encodeURI(username)
-            const token = jwt.sign({id, _username }, secret, {expiresIn: 60*60*24*30 })
+            const token = jwt.sign({id, username: _username }, secret, {expiresIn: 60*60*24*30 })
             ctx.cookies.set('b_user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('b_userid', id, { maxAge: remember_me })
             ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
