@@ -3,14 +3,14 @@ module.exports = async (ctx, next) => {
         ctx.body = {
             code: -200,
             message,
-            data
+            data,
         }
     }
     ctx.success = (data, message = '') => {
         ctx.body = {
             code: 200,
             message,
-            data
+            data,
         }
     }
     await next()

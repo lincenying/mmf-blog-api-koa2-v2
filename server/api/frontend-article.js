@@ -24,7 +24,7 @@ exports.getList = async ctx => {
     if (!page) page = 1
     if (!limit) limit = 10
     const data = {
-            is_delete: 0
+            is_delete: 0,
         },
         skip = (page - 1) * limit
     if (id) {
@@ -32,7 +32,7 @@ exports.getList = async ctx => {
     }
     if (key) {
         const reg = new RegExp(key, 'i')
-        data.title = {$regex : reg}
+        data.title = { $regex: reg }
     }
     let sort = '-update_date'
     if (by) {
@@ -41,15 +41,19 @@ exports.getList = async ctx => {
 
     try {
         const [list, total] = await Promise.all([
-            Article.find(data).sort(sort).skip(skip).limit(limit).exec(),
-            Article.countAsync(data)
+            Article.find(data)
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            Article.countAsync(data),
         ])
         const totalPage = Math.ceil(total / limit)
         const user_id = ctx.cookies.get('userid') || ctx.header['userid']
         const tmpData = {
             total,
             hasNext: totalPage > page ? 1 : 0,
-            hasPrev: page > 1
+            hasPrev: page > 1,
         }
         if (user_id) {
             const lists = list.map(item => {
@@ -90,9 +94,9 @@ exports.getItem = async ctx => {
         return
     }
     try {
-        const [article, ] = await Promise.all([
+        const [article] = await Promise.all([
             Article.findOneAsync({ _id, is_delete: 0 }),
-            Article.updateAsync({ _id }, { '$inc':{ 'visit': 1 } })
+            Article.updateAsync({ _id }, { $inc: { visit: 1 } }),
         ])
         if (!article) {
             ctx.error('没有找到该文章')
@@ -111,9 +115,12 @@ exports.getTrending = async ctx => {
     const limit = 5
     const data = { is_delete: 0 }
     try {
-        const result = await Article.find(data).sort('-visit').limit(limit).exec()
+        const result = await Article.find(data)
+            .sort('-visit')
+            .limit(limit)
+            .exec()
         ctx.success({
-            list: result
+            list: result,
         })
     } catch (err) {
         ctx.error(err.toString())

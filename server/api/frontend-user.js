@@ -33,7 +33,7 @@ exports.login = async ctx => {
             const id = result._id
             const remember_me = 2592000000
             const _username = encodeURI(username)
-            const token = jwt.sign({id, username: _username }, secret, {expiresIn: 60*60*24*30 })
+            const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('userid', id, { maxAge: remember_me })
             ctx.cookies.set('username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
@@ -62,17 +62,20 @@ exports.wxLogin = async ctx => {
             const result = await User.findOneAsync({
                 username: nickName,
                 wx_signature: wxSignature,
-                is_delete: 0
+                is_delete: 0,
             })
             if (result) {
                 id = result._id
                 username = encodeURI(nickName)
-                token = jwt.sign({ id, username }, secret, { expiresIn: 60*60*24*30 })
-                ctx.success({
-                    user: token,
-                    userid: id,
-                    username,
-                }, '登录成功')
+                token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
+                ctx.success(
+                    {
+                        user: token,
+                        userid: id,
+                        username,
+                    },
+                    '登录成功'
+                )
             } else {
                 const _result = await User.createAsync({
                     username: nickName,
@@ -87,12 +90,15 @@ exports.wxLogin = async ctx => {
                 })
                 id = _result._id
                 username = encodeURI(nickName)
-                token = jwt.sign({ id, username }, secret, { expiresIn: 60*60*24*30 })
-                ctx.success({
-                    user: token,
-                    userid: id,
-                    username,
-                }, '注册成功')
+                token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
+                ctx.success(
+                    {
+                        user: token,
+                        userid: id,
+                        username,
+                    },
+                    '注册成功'
+                )
             }
         } catch (err) {
             ctx.error(err.toString())
@@ -140,7 +146,7 @@ exports.insert = async ctx => {
                     creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
-                    timestamp: moment().format('X')
+                    timestamp: moment().format('X'),
                 })
                 ctx.success('success', '注册成功')
             }
@@ -178,7 +184,6 @@ exports.modify = async ctx => {
     await modify(ctx, User, id, data)
 }
 
-
 /**
  * 账号编辑
  * @method account
@@ -192,7 +197,7 @@ exports.account = async ctx => {
     const username = ctx.request.body.username || ctx.header['username']
     if (user_id === id) {
         try {
-            await User.updateAsync({ _id: id }, { '$set': { email, username, update_date } })
+            await User.updateAsync({ _id: id }, { $set: { email, username, update_date } })
             ctx.success('success', '更新成功')
         } catch (err) {
             ctx.error(err.toString())
@@ -216,7 +221,7 @@ exports.password = async ctx => {
         try {
             const result = await User.findOneAsync({ _id: id, password: md5(md5Pre + old_password), is_delete: 0 })
             if (result) {
-                await User.updateAsync({ _id: id }, { '$set': { password: md5(md5Pre + password), update_date } })
+                await User.updateAsync({ _id: id }, { $set: { password: md5(md5Pre + password), update_date } })
                 ctx.success('success', '更新成功')
             } else {
                 ctx.error('原始密码错误')

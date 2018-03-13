@@ -16,15 +16,20 @@ exports.list = async (ctx, mongoDB, sort) => {
     var skip = (page - 1) * limit
     try {
         const [list, total] = await Promise.all([
-            mongoDB.find().sort(sort).skip(skip).limit(limit).exec(),
-            mongoDB.countAsync()
+            mongoDB
+                .find()
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            mongoDB.countAsync(),
         ])
         var totalPage = Math.ceil(total / limit)
         ctx.success({
             list,
             total,
             hasNext: totalPage > page ? 1 : 0,
-            hasPrev: page > 1 ? 1 : 0
+            hasPrev: page > 1 ? 1 : 0,
         })
     } catch (err) {
         ctx.error(err.toString())

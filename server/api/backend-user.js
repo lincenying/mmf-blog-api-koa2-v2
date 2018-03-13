@@ -48,13 +48,13 @@ exports.login = async ctx => {
         const result = await Admin.findOneAsync({
             username,
             password: md5(md5Pre + password),
-            is_delete: 0
+            is_delete: 0,
         })
         if (result) {
             const id = result._id
             const remember_me = 2592000000
             const _username = encodeURI(username)
-            const token = jwt.sign({id, username: _username }, secret, {expiresIn: 60*60*24*30 })
+            const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('b_user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('b_userid', id, { maxAge: remember_me })
             ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
@@ -94,10 +94,10 @@ exports.insert = async ctx => {
                     creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
-                    timestamp: moment().format('X')
+                    timestamp: moment().format('X'),
                 })
                 await fs.writeFileSync('./admin.lock', username)
-                payload.message = '添加用户成功: '+username+', 密码: '+password
+                payload.message = '添加用户成功: ' + username + ', 密码: ' + password
             }
         } catch (err) {
             payload.message = err.toString()

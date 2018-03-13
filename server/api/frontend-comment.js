@@ -36,11 +36,11 @@ exports.insert = async ctx => {
         creat_date,
         is_delete: 0,
         timestamp,
-        update_date
+        update_date,
     }
     try {
         const result = await Comment.createAsync(data)
-        await Article.updateAsync({ _id: id }, { '$inc':{ 'comment_count': 1 } })
+        await Article.updateAsync({ _id: id }, { $inc: { comment_count: 1 } })
         ctx.success(result)
     } catch (err) {
         ctx.error(err.toString())
@@ -64,7 +64,7 @@ exports.getList = async ctx => {
         if (!page) page = 1
         if (!limit) limit = 10
         const data = {
-                article_id: id
+                article_id: id,
             },
             skip = (page - 1) * limit
         if (!all) {
@@ -72,14 +72,18 @@ exports.getList = async ctx => {
         }
         try {
             const [list, total] = await Promise.all([
-                Comment.find(data).sort('-_id').skip(skip).limit(limit).exec(),
-                Comment.countAsync(data)
+                Comment.find(data)
+                    .sort('-_id')
+                    .skip(skip)
+                    .limit(limit)
+                    .exec(),
+                Comment.countAsync(data),
             ])
             const totalPage = Math.ceil(total / limit)
             ctx.success({
                 list,
                 total,
-                hasNext: totalPage > page ? 1 : 0
+                hasNext: totalPage > page ? 1 : 0,
             })
         } catch (err) {
             ctx.error(err.toString())
@@ -97,7 +101,7 @@ exports.deletes = async ctx => {
     const _id = ctx.query.id
     try {
         await Comment.updateAsync({ _id }, { is_delete: 1 })
-        await Article.updateAsync({ _id }, { '$inc': { 'comment_count': -1 } })
+        await Article.updateAsync({ _id }, { $inc: { comment_count: -1 } })
         ctx.success('success', '删除成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -114,7 +118,7 @@ exports.recover = async ctx => {
     const _id = ctx.query.id
     try {
         await Comment.updateAsync({ _id }, { is_delete: 0 })
-        await Article.updateAsync({ _id }, { '$inc': { 'comment_count': 1 } })
+        await Article.updateAsync({ _id }, { $inc: { comment_count: 1 } })
         ctx.success('success', '恢复成功')
     } catch (err) {
         ctx.error(err.toString())

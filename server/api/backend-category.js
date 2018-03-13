@@ -16,9 +16,11 @@ const deletes = general.deletes
  */
 exports.getList = async ctx => {
     try {
-        const result = await Category.find().sort('-cate_order').exec()
+        const result = await Category.find()
+            .sort('-cate_order')
+            .exec()
         ctx.success({
-            list: result
+            list: result,
         })
     } catch (err) {
         ctx.error(err.toString())
@@ -41,7 +43,7 @@ exports.insert = async ctx => {
                 creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 is_delete: 0,
-                timestamp: moment().format('X')
+                timestamp: moment().format('X'),
             })
             ctx.success(result._id, '添加成功')
         } catch (err) {
