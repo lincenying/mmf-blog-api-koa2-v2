@@ -59,7 +59,7 @@ exports.insert = async ctx => {
     }
     try {
         const result = await Article.createAsync(data)
-        await Category.updateAsync({ _id: category }, { $inc: { cate_num: 1 } })
+        await Category.updateAsync({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
         ctx.success(result, '发布成功')
     } catch (err) {
         ctx.error(err.toString())
