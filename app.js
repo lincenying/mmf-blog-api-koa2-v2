@@ -21,13 +21,12 @@ const index = require('./server/routes/index')
 app.use(convert(bodyparser))
 app.use(convert(json()))
 app.use(convert(logger()))
-app.use(convert(require('koa-static')(path.join(__dirname, "public"))))
+app.use(convert(require('koa-static')(path.join(__dirname, 'public'))))
 
-app.use(views(path.join(__dirname, "views"), {extension: 'ejs'}))
-
+app.use(views(path.join(__dirname, 'views'), { extension: 'ejs' }))
 
 // logger
-app.use(async(ctx, next) => {
+app.use(async (ctx, next) => {
     const start = new Date()
     await next()
     const ms = new Date() - start
@@ -39,7 +38,7 @@ app.use(async(ctx, next) => {
             tag: 'error',
             status: err.status,
             message: err.message,
-            stack: err.stack
+            stack: err.stack,
         }
     }
 })
@@ -48,7 +47,7 @@ app.use(require('./server/middlewares/return'))
 
 app.use(index.routes(), router.allowedMethods())
 
-app.on('error', function (err, ctx) {
+app.on('error', function(err, ctx) {
     console.error('server error', err, ctx)
 })
 

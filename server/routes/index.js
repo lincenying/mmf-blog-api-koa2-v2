@@ -18,4 +18,8 @@ router.post('/backend', backendUser.insert)
 router.use('/api/backend', backend.routes(), backend.allowedMethods())
 router.use('/api/frontend', frontend.routes(), frontend.allowedMethods())
 
+router.get('*', async ctx => {
+    ctx.body = '404 Not Found'
+})
+
 module.exports = router
