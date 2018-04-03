@@ -25,6 +25,7 @@ router.post('/user/insert', frontendUser.insert)
 // 前台登录
 router.post('/user/login', frontendUser.login)
 // 微信登录
+router.post('/user/jscode2session', frontendUser.jscode2session)
 router.post('/user/wxLogin', frontendUser.wxLogin)
 // 前台退出
 router.post('/user/logout', isUser, frontendUser.logout)
