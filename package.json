@@ -11,11 +11,11 @@
   "dependencies": {
     "axios": "^0.18.0",
     "debug": "^3.1.0",
-    "ejs": "^2.5.9",
+    "ejs": "^2.6.1",
     "highlight.js": "^9.12.0",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.2.1",
-    "koa": "^2.4.1",
+    "koa": "^2.5.1",
     "koa-bodyparser": "^4.2.0",
     "koa-convert": "^1.2.0",
     "koa-json": "^2.0.2",
@@ -27,14 +27,14 @@
     "marked": "^0.3.19",
     "md5": "^2.2.1",
     "moment": "^2.22.1",
-    "mongoose": "^5.0.16",
+    "mongoose": "^5.0.18",
     "runkoa": "^1.5.2"
   },
   "devDependencies": {
     "eslint-config-lcy-vue": "^2.1.5",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
-    "nodemon": "^1.17.3",
+    "nodemon": "^1.17.4",
     "prettier": "^1.12.1",
     "should": "^13.2.1"
   },
