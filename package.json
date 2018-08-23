@@ -6,7 +6,8 @@
     "start": "./node_modules/.bin/nodemon bin/run",
     "koa": "./node_modules/.bin/runkoa bin/www",
     "pm2": "pm2 start bin/run",
-    "lint": "eslint --ext .js server/ --fix"
+    "lint": "eslint --ext .js server/ --fix",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -14,32 +15,54 @@
     "ejs": "^2.6.1",
     "highlight.js": "^9.12.0",
     "jade": "~1.11.0",
-    "jsonwebtoken": "^8.2.1",
-    "koa": "^2.5.1",
+    "jsonwebtoken": "^8.3.0",
+    "koa": "^2.5.2",
     "koa-bodyparser": "^4.2.1",
     "koa-convert": "^1.2.0",
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.0",
-    "koa-onerror": "^4.0.0",
+    "koa-onerror": "^4.1.0",
     "koa-router": "^7.4.0",
-    "koa-static": "^4.0.3",
+    "koa-static": "^5.0.0",
     "koa-views": "^6.1.4",
-    "marked": "^0.4.0",
+    "marked": "^0.5.0",
     "md5": "^2.2.1",
-    "moment": "^2.22.1",
-    "mongoose": "^5.1.2",
+    "moment": "^2.22.2",
+    "mongoose": "^5.2.9",
     "runkoa": "^1.5.2"
   },
   "devDependencies": {
-    "eslint-config-lcy-vue": "^2.1.5",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "nodemon": "^1.17.5",
-    "prettier": "^1.12.1",
-    "should": "^13.2.1"
+    "eslint-config-lcy-vue": "^3.0.2",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-plugin-prettier": "^2.6.2",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.2",
+    "nodemon": "^1.18.3",
+    "prettier": "^1.14.2",
+    "should": "^13.2.3"
   },
   "engines": {
     "node": ">= 8.0.0",
     "npm": ">= 5.0.0"
+  },
+  "browserslist": [
+    "> 0.1%",
+    "last 3 versions",
+    "not ie <= 8",
+    "iOS > 8"
+  ],
+  "lint-staged": {
+    "*.jsx": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.vue": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
