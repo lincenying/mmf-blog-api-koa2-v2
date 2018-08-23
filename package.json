@@ -52,15 +52,7 @@
     "iOS > 8"
   ],
   "lint-staged": {
-    "*.jsx": [
-      "eslint --fix",
-      "git add"
-    ],
     "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.vue": [
       "eslint --fix",
       "git add"
     ]
