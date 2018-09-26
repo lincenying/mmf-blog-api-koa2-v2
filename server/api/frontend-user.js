@@ -218,7 +218,7 @@ exports.account = async ctx => {
     const username = ctx.request.body.username || ctx.header['username']
     if (user_id === id) {
         try {
-            await User.updateAsync({ _id: id }, { $set: { email, username, update_date } })
+            await User.updateOneAsync({ _id: id }, { $set: { email, username, update_date } })
             ctx.success('success', '更新成功')
         } catch (err) {
             ctx.error(err.toString())
@@ -242,7 +242,7 @@ exports.password = async ctx => {
         try {
             const result = await User.findOneAsync({ _id: id, password: md5(md5Pre + old_password), is_delete: 0 })
             if (result) {
-                await User.updateAsync({ _id: id }, { $set: { password: md5(md5Pre + password), update_date } })
+                await User.updateOneAsync({ _id: id }, { $set: { password: md5(md5Pre + password), update_date } })
                 ctx.success('success', '更新成功')
             } else {
                 ctx.error('原始密码错误')

@@ -59,7 +59,7 @@ exports.insert = async ctx => {
     }
     try {
         const result = await Article.createAsync(data)
-        await Category.updateAsync({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
+        await Category.updateOneAsync({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
         ctx.success(result, '发布成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -75,8 +75,8 @@ exports.insert = async ctx => {
 exports.deletes = async ctx => {
     const _id = ctx.query.id
     try {
-        await Article.updateAsync({ _id }, { is_delete: 1 })
-        await Category.updateAsync({ _id }, { $inc: { cate_num: -1 } })
+        await Article.updateOneAsync({ _id }, { is_delete: 1 })
+        await Category.updateOneAsync({ _id }, { $inc: { cate_num: -1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -92,8 +92,8 @@ exports.deletes = async ctx => {
 exports.recover = async ctx => {
     const _id = ctx.query.id
     try {
-        await Article.updateAsync({ _id }, { is_delete: 0 })
-        await Category.updateAsync({ _id }, { $inc: { cate_num: 1 } })
+        await Article.updateOneAsync({ _id }, { is_delete: 0 })
+        await Category.updateOneAsync({ _id }, { $inc: { cate_num: 1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -118,8 +118,8 @@ exports.modify = async ctx => {
         )
         if (category !== category_old) {
             await Promise.all([
-                Category.updateAsync({ _id: category }, { $inc: { cate_num: 1 } }),
-                Category.updateAsync({ _id: category_old }, { $inc: { cate_num: -1 } }),
+                Category.updateOneAsync({ _id: category }, { $inc: { cate_num: 1 } }),
+                Category.updateOneAsync({ _id: category_old }, { $inc: { cate_num: -1 } }),
             ])
         }
         ctx.success(result, '更新成功')

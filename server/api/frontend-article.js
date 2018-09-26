@@ -46,7 +46,7 @@ exports.getList = async ctx => {
                 .skip(skip)
                 .limit(limit)
                 .exec(),
-            Article.countAsync(data),
+            Article.countDocumentsAsync(data),
         ])
         const totalPage = Math.ceil(total / limit)
         const user_id = ctx.cookies.get('userid') || ctx.header['userid']
@@ -96,7 +96,7 @@ exports.getItem = async ctx => {
     try {
         const [article] = await Promise.all([
             Article.findOneAsync({ _id, is_delete: 0 }),
-            Article.updateAsync({ _id }, { $inc: { visit: 1 } }),
+            Article.updateOneAsync({ _id }, { $inc: { visit: 1 } }),
         ])
         if (!article) {
             ctx.error('没有找到该文章')

@@ -22,7 +22,7 @@ exports.list = async (ctx, mongoDB, sort) => {
                 .skip(skip)
                 .limit(limit)
                 .exec(),
-            mongoDB.countAsync(),
+            mongoDB.countDocumentsAsync(),
         ])
         var totalPage = Math.ceil(total / limit)
         ctx.success({
@@ -67,7 +67,7 @@ exports.item = async (ctx, mongoDB) => {
 exports.deletes = async (ctx, mongoDB) => {
     const _id = ctx.query.id
     try {
-        await mongoDB.updateAsync({ _id }, { is_delete: 1 })
+        await mongoDB.updateOneAsync({ _id }, { is_delete: 1 })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -102,7 +102,7 @@ exports.modify = async (ctx, mongoDB, _id, data) => {
 exports.recover = async (ctx, mongoDB) => {
     const _id = ctx.query.id
     try {
-        await mongoDB.updateAsync({ _id }, { is_delete: 0 })
+        await mongoDB.updateOneAsync({ _id }, { is_delete: 0 })
         ctx.success('success', '更新成功')
     } catch (err) {
         ctx.error(err.toString())

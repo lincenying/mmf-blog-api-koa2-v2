@@ -40,7 +40,7 @@ exports.insert = async ctx => {
     }
     try {
         const result = await Comment.createAsync(data)
-        await Article.updateAsync({ _id: id }, { $inc: { comment_count: 1 } })
+        await Article.updateOneAsync({ _id: id }, { $inc: { comment_count: 1 } })
         ctx.success(result)
     } catch (err) {
         ctx.error(err.toString())
@@ -77,7 +77,7 @@ exports.getList = async ctx => {
                     .skip(skip)
                     .limit(limit)
                     .exec(),
-                Comment.countAsync(data),
+                Comment.countDocumentsAsync(data),
             ])
             const totalPage = Math.ceil(total / limit)
             ctx.success({
@@ -100,8 +100,8 @@ exports.getList = async ctx => {
 exports.deletes = async ctx => {
     const _id = ctx.query.id
     try {
-        await Comment.updateAsync({ _id }, { is_delete: 1 })
-        await Article.updateAsync({ _id }, { $inc: { comment_count: -1 } })
+        await Comment.updateOneAsync({ _id }, { is_delete: 1 })
+        await Article.updateOneAsync({ _id }, { $inc: { comment_count: -1 } })
         ctx.success('success', '删除成功')
     } catch (err) {
         ctx.error(err.toString())
@@ -117,8 +117,8 @@ exports.deletes = async ctx => {
 exports.recover = async ctx => {
     const _id = ctx.query.id
     try {
-        await Comment.updateAsync({ _id }, { is_delete: 0 })
-        await Article.updateAsync({ _id }, { $inc: { comment_count: 1 } })
+        await Comment.updateOneAsync({ _id }, { is_delete: 0 })
+        await Article.updateOneAsync({ _id }, { $inc: { comment_count: 1 } })
         ctx.success('success', '恢复成功')
     } catch (err) {
         ctx.error(err.toString())
