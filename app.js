@@ -7,6 +7,7 @@ const convert = require('koa-convert')
 const json = require('koa-json')
 const bodyparser = require('koa-bodyparser')()
 const logger = require('koa-logger')
+const proxy = require('./server/middlewares/proxy')
 
 // 引入 mongoose 相关模型
 require('./server/models/admin')
@@ -44,6 +45,8 @@ app.use(async (ctx, next) => {
 })
 
 app.use(require('./server/middlewares/return'))
+
+app.use(proxy(app))
 
 app.use(index.routes(), router.allowedMethods())
 

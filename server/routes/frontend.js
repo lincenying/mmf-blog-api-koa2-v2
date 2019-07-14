@@ -3,6 +3,7 @@ const frontendArticle = require('../api/frontend-article')
 const frontendComment = require('../api/frontend-comment')
 const frontendLike = require('../api/frontend-like')
 const frontendUser = require('../api/frontend-user')
+const frontendProxy = require('../api/proxy')
 const isUser = require('../middlewares/user')
 
 // API
@@ -42,5 +43,7 @@ router.get('/like', isUser, frontendLike.like)
 router.get('/unlike', isUser, frontendLike.unlike)
 // 重置喜欢
 router.get('/reset/like', isUser, frontendLike.resetLike)
+// ------ 代理测试 ------
+router.get('/proxy', frontendProxy.getProxyList)
 
 module.exports = router
