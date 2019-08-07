@@ -15,6 +15,7 @@ require('./server/models/article')
 require('./server/models/category')
 require('./server/models/comment')
 require('./server/models/user')
+require('./server/models/shihua')
 
 const index = require('./server/routes/index')
 
@@ -39,7 +40,7 @@ app.use(async (ctx, next) => {
             tag: 'error',
             status: err.status,
             message: err.message,
-            stack: err.stack,
+            stack: err.stack
         }
     }
 })

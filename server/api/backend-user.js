@@ -41,14 +41,14 @@ exports.getItem = async ctx => {
 exports.login = async ctx => {
     const { password, username } = ctx.request.body
     if (username === '' || password === '') {
-        ctx.error('请输入用户名和密码')
+        ctx.error(null, '请输入用户名和密码')
         return
     }
     try {
         const result = await Admin.findOneAsync({
             username,
             password: md5(md5Pre + password),
-            is_delete: 0,
+            is_delete: 0
         })
         if (result) {
             const id = result._id
@@ -60,10 +60,10 @@ exports.login = async ctx => {
             ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
             ctx.success(token, '登录成功')
         } else {
-            ctx.error('用户名或者密码错误')
+            ctx.error(null, '用户名或者密码错误')
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -94,7 +94,7 @@ exports.insert = async ctx => {
                     creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
-                    timestamp: moment().format('X'),
+                    timestamp: moment().format('X')
                 })
                 await fs.writeFileSync('./admin.lock', username)
                 payload.message = '添加用户成功: ' + username + ', 密码: ' + password

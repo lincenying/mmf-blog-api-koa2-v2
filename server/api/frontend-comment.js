@@ -12,10 +12,10 @@ const Article = mongoose.model('Article')
 exports.insert = async ctx => {
     const { id, content } = ctx.request.body
     if (!id) {
-        ctx.error('参数错误')
+        ctx.error(null, '参数错误')
         return
     } else if (!content) {
-        ctx.error('请输入评论内容')
+        ctx.error(null, '请输入评论内容')
         return
     }
     const avatar = ctx.request.body.avatar || ''
@@ -23,6 +23,7 @@ exports.insert = async ctx => {
     const timestamp = moment().format('X')
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const userid = ctx.cookies.get('userid') || ctx.header['userid']
+    const useremail = ctx.cookies.get('useremail') || ctx.header['useremail']
     let username = ctx.cookies.get('username') || ctx.header['username']
     username = new Buffer(username, 'base64').toString()
     username = decodeURI(username)
@@ -31,19 +32,19 @@ exports.insert = async ctx => {
         article_id: id,
         userid,
         username,
-        email: '',
+        email: useremail,
         content,
         creat_date,
         is_delete: 0,
         timestamp,
-        update_date,
+        update_date
     }
     try {
         const result = await Comment.createAsync(data)
         await Article.updateOneAsync({ _id: id }, { $inc: { comment_count: 1 } })
         ctx.success(result)
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -57,14 +58,14 @@ exports.getList = async ctx => {
     const { all, id } = ctx.query
     let { limit, page } = ctx.query
     if (!id) {
-        ctx.error('参数错误')
+        ctx.error(null, '参数错误')
     } else {
         page = parseInt(page, 10)
         limit = parseInt(limit, 10)
         if (!page) page = 1
         if (!limit) limit = 10
         const data = {
-                article_id: id,
+                article_id: id
             },
             skip = (page - 1) * limit
         if (!all) {
@@ -77,16 +78,16 @@ exports.getList = async ctx => {
                     .skip(skip)
                     .limit(limit)
                     .exec(),
-                Comment.countDocumentsAsync(data),
+                Comment.countDocumentsAsync(data)
             ])
             const totalPage = Math.ceil(total / limit)
             ctx.success({
                 list,
                 total,
-                hasNext: totalPage > page ? 1 : 0,
+                hasNext: totalPage > page ? 1 : 0
             })
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     }
 }
@@ -104,7 +105,7 @@ exports.deletes = async ctx => {
         await Article.updateOneAsync({ _id }, { $inc: { comment_count: -1 } })
         ctx.success('success', '删除成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -121,6 +122,6 @@ exports.recover = async ctx => {
         await Article.updateOneAsync({ _id }, { $inc: { comment_count: 1 } })
         ctx.success('success', '恢复成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }

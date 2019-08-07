@@ -1,16 +1,11 @@
-/* eslint-disable */
-const Stream = require('stream')
+'use strict'
+
 const Request = require('request')
 const debug = require('debug')('koa-grace:proxy')
 const error = require('debug')('koa-grace-error:proxy')
 
 // json types
-const JSON_TYPES = [
-    'application/json',
-    'application/json-patch+json',
-    'application/vnd.api+json',
-    'application/csp-report',
-]
+const JSON_TYPES = ['application/json', 'application/json-patch+json', 'application/vnd.api+json', 'application/csp-report']
 
 /**
  * request包装成promise函数
@@ -41,7 +36,7 @@ module.exports = function request(ctx, param, options, callback) {
             gzip: true, //是否gzip
             timeout: 15000, // 超时时间
             json, // json数据
-            form, // post的form参数，默认为undefined
+            form // post的form参数，默认为undefined
         },
         options
     )
@@ -59,7 +54,7 @@ module.exports = function request(ctx, param, options, callback) {
     function _createReq(resolve) {
         const startTime = new Date()
         return Request(opt, (err, httpResponse, data) => {
-            let status = (httpResponse && httpResponse.statusCode) || 'NULL',
+            const status = (httpResponse && httpResponse.statusCode) || 'NULL',
                 duration = new Date() - startTime + 'ms',
                 info = { status, duration }
 
@@ -93,7 +88,7 @@ module.exports = function request(ctx, param, options, callback) {
             resolve(
                 callback(httpResponse, {
                     code: 'NULL',
-                    message: 'No response data!',
+                    message: 'No response data!'
                 })
             )
         })

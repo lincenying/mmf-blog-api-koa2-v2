@@ -24,7 +24,7 @@ exports.getList = async ctx => {
     if (!page) page = 1
     if (!limit) limit = 10
     const data = {
-            is_delete: 0,
+            is_delete: 0
         },
         skip = (page - 1) * limit
     if (id) {
@@ -46,14 +46,14 @@ exports.getList = async ctx => {
                 .skip(skip)
                 .limit(limit)
                 .exec(),
-            Article.countDocumentsAsync(data),
+            Article.countDocumentsAsync(data)
         ])
         const totalPage = Math.ceil(total / limit)
         const user_id = ctx.cookies.get('userid') || ctx.header['userid']
         const tmpData = {
             total,
             hasNext: totalPage > page ? 1 : 0,
-            hasPrev: page > 1,
+            hasPrev: page > 1
         }
         if (user_id) {
             const lists = list.map(item => {
@@ -75,7 +75,7 @@ exports.getList = async ctx => {
             ctx.success(tmpData)
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -90,16 +90,13 @@ exports.getItem = async ctx => {
     const _id = ctx.query.id
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     if (!_id) {
-        ctx.error('参数错误')
+        ctx.error(null, '参数错误')
         return
     }
     try {
-        const [article] = await Promise.all([
-            Article.findOneAsync({ _id, is_delete: 0 }),
-            Article.updateOneAsync({ _id }, { $inc: { visit: 1 } }),
-        ])
+        const [article] = await Promise.all([Article.findOneAsync({ _id, is_delete: 0 }), Article.updateOneAsync({ _id }, { $inc: { visit: 1 } })])
         if (!article) {
-            ctx.error('没有找到该文章')
+            ctx.error(null, '没有找到该文章')
         } else {
             if (user_id) article._doc.like_status = article.likes.indexOf(user_id) > -1
             else article._doc.like_status = false
@@ -107,7 +104,7 @@ exports.getItem = async ctx => {
             ctx.success(article)
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -120,9 +117,9 @@ exports.getTrending = async ctx => {
             .limit(limit)
             .exec()
         ctx.success({
-            list: result,
+            list: result
         })
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }

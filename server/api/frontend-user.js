@@ -28,24 +28,34 @@ exports.getList = async ctx => {
 exports.login = async ctx => {
     const { username, password } = ctx.request.body
     if (username === '' || password === '') {
-        ctx.error('请输入用户名和密码')
+        ctx.error(null, '请输入用户名和密码')
     }
     try {
         const result = await User.findOneAsync({ username, password: md5(md5Pre + password), is_delete: 0 })
         if (result) {
             const id = result._id
+            const email = result.email
             const remember_me = 2592000000
             const _username = encodeURI(username)
             const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('user', token, { maxAge: remember_me, httpOnly: false })
-            ctx.cookies.set('userid', id, { maxAge: remember_me })
-            ctx.cookies.set('username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
-            ctx.success(token, '登录成功')
+            ctx.cookies.set('userid', id, { maxAge: remember_me, httpOnly: false })
+            ctx.cookies.set('username', new Buffer(_username).toString('base64'), { maxAge: remember_me, httpOnly: false })
+            ctx.cookies.set('useremail', email, { maxAge: remember_me, httpOnly: false })
+            ctx.success(
+                {
+                    user: token,
+                    userid: id,
+                    username: _username,
+                    email
+                },
+                '登录成功'
+            )
         } else {
-            ctx.error('用户名或者密码错误')
+            ctx.error(null, '用户名或者密码错误')
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -62,8 +72,8 @@ exports.jscode2session = async ctx => {
             appid: mpappApiId,
             secret: mpappSecret,
             js_code,
-            grant_type: 'authorization_code',
-        },
+            grant_type: 'authorization_code'
+        }
     })
     ctx.success(xhr.data, '登录成功')
 }
@@ -77,13 +87,13 @@ exports.wxLogin = async ctx => {
     let id, token, username
     const { nickName, wxSignature, avatar } = ctx.request.body
     if (!nickName || !wxSignature) {
-        ctx.error('参数有误, 微信登录失败')
+        ctx.error(null, '参数有误, 微信登录失败')
     } else {
         try {
             const result = await User.findOneAsync({
                 username: nickName,
                 wx_signature: wxSignature,
-                is_delete: 0,
+                is_delete: 0
             })
             if (result) {
                 id = result._id
@@ -93,7 +103,7 @@ exports.wxLogin = async ctx => {
                     {
                         user: token,
                         userid: id,
-                        username,
+                        username
                     },
                     '登录成功'
                 )
@@ -107,7 +117,7 @@ exports.wxLogin = async ctx => {
                     is_delete: 0,
                     timestamp: moment().format('X'),
                     wx_avatar: avatar,
-                    wx_signature: wxSignature,
+                    wx_signature: wxSignature
                 })
                 id = _result._id
                 username = encodeURI(nickName)
@@ -116,13 +126,13 @@ exports.wxLogin = async ctx => {
                     {
                         user: token,
                         userid: id,
-                        username,
+                        username
                     },
                     '注册成功'
                 )
             }
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     }
 }
@@ -135,8 +145,9 @@ exports.wxLogin = async ctx => {
  */
 exports.logout = async ctx => {
     ctx.cookies.set('user', '', { maxAge: -1, httpOnly: false })
-    ctx.cookies.set('userid', '', { maxAge: -1 })
-    ctx.cookies.set('username', '', { maxAge: -1 })
+    ctx.cookies.set('userid', '', { maxAge: -1, httpOnly: false })
+    ctx.cookies.set('username', '', { maxAge: -1, httpOnly: false })
+    ctx.cookies.set('useremail', '', { maxAge: -1, httpOnly: false })
     ctx.success('', '退出成功')
 }
 
@@ -149,16 +160,16 @@ exports.logout = async ctx => {
 exports.insert = async ctx => {
     const { email, password, username } = ctx.request.body
     if (!username || !password || !email) {
-        ctx.error('请将表单填写完整')
+        ctx.error(null, '请将表单填写完整')
     } else if (strlen(username) < 4) {
-        ctx.error('用户长度至少 2 个中文或 4 个英文')
+        ctx.error(null, '用户长度至少 2 个中文或 4 个英文')
     } else if (strlen(password) < 8) {
-        ctx.error('密码长度至少 8 位')
+        ctx.error(null, '密码长度至少 8 位')
     } else {
         try {
             const result = await User.findOneAsync({ username })
             if (result) {
-                ctx.error('该用户名已经存在')
+                ctx.error(null, '该用户名已经存在')
             } else {
                 await User.createAsync({
                     username,
@@ -167,12 +178,12 @@ exports.insert = async ctx => {
                     creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                     is_delete: 0,
-                    timestamp: moment().format('X'),
+                    timestamp: moment().format('X')
                 })
                 ctx.success('success', '注册成功')
             }
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     }
 }
@@ -184,10 +195,10 @@ exports.getItem = async ctx => {
         if (result) {
             ctx.success(result)
         } else {
-            ctx.error('请先登录, 或者数据错误')
+            ctx.error(null, '请先登录, 或者数据错误')
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -221,10 +232,10 @@ exports.account = async ctx => {
             await User.updateOneAsync({ _id: id }, { $set: { email, username, update_date } })
             ctx.success('success', '更新成功')
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     } else {
-        ctx.error('当前没有权限')
+        ctx.error(null, '当前没有权限')
     }
 }
 
@@ -245,13 +256,13 @@ exports.password = async ctx => {
                 await User.updateOneAsync({ _id: id }, { $set: { password: md5(md5Pre + password), update_date } })
                 ctx.success('success', '更新成功')
             } else {
-                ctx.error('原始密码错误')
+                ctx.error(null, '原始密码错误')
             }
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     } else {
-        ctx.error('当前没有权限')
+        ctx.error(null, '当前没有权限')
     }
 }
 

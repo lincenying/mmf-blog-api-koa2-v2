@@ -9,7 +9,7 @@ const backendUser = require('../api/backend-user')
 router.get('/backend', async ctx => {
     ctx.state = {
         title: '后台登录',
-        message: '',
+        message: ''
     }
     await ctx.render('admin-add', {})
 })

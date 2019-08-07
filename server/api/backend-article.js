@@ -10,7 +10,7 @@ marked.setOptions({
     highlight(code) {
         return hljs.highlightAuto(code).value
     },
-    breaks: true,
+    breaks: true
 })
 
 /**
@@ -55,14 +55,14 @@ exports.insert = async ctx => {
         creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
         is_delete: 0,
-        timestamp: moment().format('X'),
+        timestamp: moment().format('X')
     }
     try {
         const result = await Article.createAsync(data)
         await Category.updateOneAsync({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
         ctx.success(result, '发布成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -79,7 +79,7 @@ exports.deletes = async ctx => {
         await Category.updateOneAsync({ _id }, { $inc: { cate_num: -1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -96,7 +96,7 @@ exports.recover = async ctx => {
         await Category.updateOneAsync({ _id }, { $inc: { cate_num: 1 } })
         ctx.success('success', '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -111,19 +111,15 @@ exports.modify = async ctx => {
     const html = marked(content)
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     try {
-        const result = await Article.findOneAndUpdateAsync(
-            { _id: id },
-            { category, category_name, content, html, title, update_date },
-            { new: true }
-        )
+        const result = await Article.findOneAndUpdateAsync({ _id: id }, { category, category_name, content, html, title, update_date }, { new: true })
         if (category !== category_old) {
             await Promise.all([
                 Category.updateOneAsync({ _id: category }, { $inc: { cate_num: 1 } }),
-                Category.updateOneAsync({ _id: category_old }, { $inc: { cate_num: -1 } }),
+                Category.updateOneAsync({ _id: category_old }, { $inc: { cate_num: -1 } })
             ])
         }
         ctx.success(result, '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }

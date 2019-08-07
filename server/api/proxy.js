@@ -5,9 +5,9 @@ exports.getProxyList = async ctx => {
         if (body) {
             ctx.success(body.data)
         } else {
-            ctx.error('没有抓取到数据')
+            ctx.error(null, '没有抓取到数据')
         }
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }

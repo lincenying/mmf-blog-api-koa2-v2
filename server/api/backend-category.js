@@ -20,10 +20,10 @@ exports.getList = async ctx => {
             .sort('-cate_order')
             .exec()
         ctx.success({
-            list: result,
+            list: result
         })
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -34,7 +34,7 @@ exports.getItem = async ctx => {
 exports.insert = async ctx => {
     const { cate_name, cate_order } = ctx.request.body
     if (!cate_name || !cate_order) {
-        ctx.error('请填写分类名称和排序')
+        ctx.error(null, '请填写分类名称和排序')
     } else {
         try {
             const result = await Category.createAsync({
@@ -43,11 +43,11 @@ exports.insert = async ctx => {
                 creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 is_delete: 0,
-                timestamp: moment().format('X'),
+                timestamp: moment().format('X')
             })
             ctx.success(result._id, '添加成功')
         } catch (err) {
-            ctx.error(err.toString())
+            ctx.error(null, err.toString())
         }
     }
 }

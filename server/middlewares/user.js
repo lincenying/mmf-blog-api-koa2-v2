@@ -14,17 +14,18 @@ module.exports = async (ctx, next) => {
             ctx.cookies.set('user', '', { maxAge: 0, httpOnly: false })
             ctx.cookies.set('userid', '', { maxAge: 0 })
             ctx.cookies.set('username', '', { maxAge: 0 })
+            ctx.cookies.set('useremail', '', { maxAge: 0 })
             ctx.body = {
                 code: -400,
                 message: '登录验证失败',
-                data: '',
+                data: ''
             }
         }
     } else {
         ctx.body = {
             code: -400,
             message: '请先登录',
-            data: '',
+            data: ''
         }
     }
 }

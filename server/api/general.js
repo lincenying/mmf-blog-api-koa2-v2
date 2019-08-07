@@ -22,17 +22,17 @@ exports.list = async (ctx, mongoDB, sort) => {
                 .skip(skip)
                 .limit(limit)
                 .exec(),
-            mongoDB.countDocumentsAsync(),
+            mongoDB.countDocumentsAsync()
         ])
         var totalPage = Math.ceil(total / limit)
         ctx.success({
             list,
             total,
             hasNext: totalPage > page ? 1 : 0,
-            hasPrev: page > 1 ? 1 : 0,
+            hasPrev: page > 1 ? 1 : 0
         })
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -46,14 +46,14 @@ exports.list = async (ctx, mongoDB, sort) => {
 exports.item = async (ctx, mongoDB) => {
     const _id = ctx.query.id
     if (!_id) {
-        ctx.error('参数错误')
+        ctx.error(null, '参数错误')
         return
     }
     try {
         const result = await mongoDB.findOneAsync({ _id })
         ctx.success(result)
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -70,7 +70,7 @@ exports.deletes = async (ctx, mongoDB) => {
         await mongoDB.updateOneAsync({ _id }, { is_delete: 1 })
         ctx.success('success', '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -88,7 +88,7 @@ exports.modify = async (ctx, mongoDB, _id, data) => {
         const result = await mongoDB.findOneAndUpdateAsync({ _id }, data, { new: true })
         ctx.success(result, '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }
 
@@ -105,6 +105,6 @@ exports.recover = async (ctx, mongoDB) => {
         await mongoDB.updateOneAsync({ _id }, { is_delete: 0 })
         ctx.success('success', '更新成功')
     } catch (err) {
-        ctx.error(err.toString())
+        ctx.error(null, err.toString())
     }
 }

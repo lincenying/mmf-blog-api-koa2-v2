@@ -17,14 +17,14 @@ module.exports = async (ctx, next) => {
             ctx.body = {
                 code: -500,
                 message: '登录验证失败',
-                data: '',
+                data: ''
             }
         }
     } else {
         ctx.body = {
             code: -500,
             message: '请先登录',
-            data: '',
+            data: ''
         }
     }
 }

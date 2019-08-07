@@ -1,5 +1,5 @@
 {
-    "extends": ["lcy-vue"],
+    "extends": ["lcy-js"],
     "rules": {
         "no-irregular-whitespace": 0
     }
