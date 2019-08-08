@@ -226,10 +226,11 @@ exports.account = async ctx => {
     const { id, email } = ctx.request.body
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
-    const username = ctx.request.body.username || ctx.header['username']
+    // const username = ctx.request.body.username || ctx.header['username']
     if (user_id === id) {
         try {
-            await User.updateOneAsync({ _id: id }, { $set: { email, username, update_date } })
+            await User.updateOneAsync({ _id: id }, { $set: { email, update_date } })
+            ctx.cookies.set('useremail', email, { maxAge: 2592000000, httpOnly: false })
             ctx.success('success', '更新成功')
         } catch (err) {
             ctx.error(null, err.toString())
