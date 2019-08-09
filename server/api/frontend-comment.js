@@ -23,16 +23,10 @@ exports.insert = async ctx => {
     const timestamp = moment().format('X')
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const userid = ctx.cookies.get('userid') || ctx.header['userid']
-    const useremail = ctx.cookies.get('useremail') || ctx.header['useremail']
-    let username = ctx.cookies.get('username') || ctx.header['username']
-    username = new Buffer(username, 'base64').toString()
-    username = decodeURI(username)
     const data = {
         avatar,
         article_id: id,
         userid,
-        username,
-        email: useremail,
         content,
         creat_date,
         is_delete: 0,
