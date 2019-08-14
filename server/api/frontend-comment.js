@@ -18,13 +18,11 @@ exports.insert = async ctx => {
         ctx.error(null, '请输入评论内容')
         return
     }
-    const avatar = ctx.request.body.avatar || ''
     const creat_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const timestamp = moment().format('X')
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const userid = ctx.cookies.get('userid') || ctx.header['userid']
     const data = {
-        avatar,
         article_id: id,
         userid,
         content,

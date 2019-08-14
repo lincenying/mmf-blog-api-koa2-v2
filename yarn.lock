@@ -1677,13 +1677,13 @@ escape-string-regexp@1.0.5, escape-string-regexp@^1.0.2, escape-string-regexp@^1
   resolved "http://registry.npm.taobao.org/escape-string-regexp/download/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-config-lcy-js@^3.0.7:
-  version "3.0.7"
-  resolved "https://registry.npm.taobao.org/eslint-config-lcy-js/download/eslint-config-lcy-js-3.0.7.tgz#4bb8762b00027b00e5222bacc4739e2bde60c02b"
-  integrity sha1-S7h2KwACewDlIiusxHOeK95gwCs=
+eslint-config-lcy-js@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.npm.taobao.org/eslint-config-lcy-js/download/eslint-config-lcy-js-3.0.8.tgz#b58b32c9c7222d0b3a4015d1fff112d0750faa62"
+  integrity sha1-tYsyycciLQs6QBXR//ES0HUPqmI=
   dependencies:
     babel-eslint "^10.0.2"
-    eslint "^6.0.1"
+    eslint "^6.1.0"
     eslint-config-prettier "^6.0.0"
     eslint-loader "^2.2.1"
     eslint-plugin-babel "^5.3.0"
@@ -1753,7 +1753,7 @@ eslint-visitor-keys@^1.0.0:
   resolved "http://registry.npm.taobao.org/eslint-visitor-keys/download/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
   integrity sha1-PzGA+y4pEBdxastMnW1bXDSmqB0=
 
-eslint@^6.0.1:
+eslint@^6.1.0:
   version "6.1.0"
   resolved "https://registry.npm.taobao.org/eslint/download/eslint-6.1.0.tgz#06438a4a278b1d84fb107d24eaaa35471986e646"
   integrity sha1-BkOKSieLHYT7EH0k6qo1RxmG5kY=
@@ -2426,10 +2426,10 @@ humanize-number@0.0.2:
   resolved "http://registry.npm.taobao.org/humanize-number/download/humanize-number-0.0.2.tgz#11c0af6a471643633588588048f1799541489c18"
   integrity sha1-EcCvakcWQ2M1iFiASPF5lUFInBg=
 
-husky@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.npm.taobao.org/husky/download/husky-3.0.2.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fhusky%2Fdownload%2Fhusky-3.0.2.tgz#e78fd2ae16edca59fc88e56aeb8d70acdcc1c082"
-  integrity sha1-54/Srhbtyln8iOVq641wrNzBwII=
+husky@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.npm.taobao.org/husky/download/husky-3.0.3.tgz#6f3fb99f60ef72cdf34e5d78445c2f798c441b1d"
+  integrity sha1-bz+5n2Dvcs3zTl14RFwveYxEGx0=
   dependencies:
     chalk "^2.4.2"
     cosmiconfig "^5.2.1"
@@ -2438,7 +2438,7 @@ husky@^3.0.2:
     is-ci "^2.0.0"
     opencollective-postinstall "^2.0.2"
     pkg-dir "^4.2.0"
-    please-upgrade-node "^3.1.1"
+    please-upgrade-node "^3.2.0"
     read-pkg "^5.1.1"
     run-node "^1.0.0"
     slash "^3.0.0"
@@ -3634,10 +3634,10 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "http://registry.npm.taobao.org/mongoose-legacy-pluralize/download/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha1-O6n5H6UHtRhtOZ+0CFS/8Y+1Y+Q=
 
-mongoose@^5.6.8:
-  version "5.6.8"
-  resolved "https://registry.npm.taobao.org/mongoose/download/mongoose-5.6.8.tgz#9b6d2575c21402def45f50072a3900c54b697cc8"
-  integrity sha1-m20ldcIUAt70X1AHKjkAxUtpfMg=
+mongoose@^5.6.9:
+  version "5.6.9"
+  resolved "https://registry.npm.taobao.org/mongoose/download/mongoose-5.6.9.tgz?cache=0&sync_timestamp=1565222199330&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmongoose%2Fdownload%2Fmongoose-5.6.9.tgz#86bdf258c5348a5c4a6acaf944d7baa73e3d1707"
+  integrity sha1-hr3yWMU0ilxKasr5RNe6pz49Fwc=
   dependencies:
     async "2.6.2"
     bson "~1.1.1"
@@ -4183,6 +4183,13 @@ please-upgrade-node@^3.1.1:
   version "3.1.1"
   resolved "http://registry.npm.taobao.org/please-upgrade-node/download/please-upgrade-node-3.1.1.tgz#ed320051dfcc5024fae696712c8288993595e8ac"
   integrity sha1-7TIAUd/MUCT65pZxLIKImTWV6Kw=
+  dependencies:
+    semver-compare "^1.0.0"
+
+please-upgrade-node@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npm.taobao.org/please-upgrade-node/download/please-upgrade-node-3.2.0.tgz#aeddd3f994c933e4ad98b99d9a556efa0e2fe942"
+  integrity sha1-rt3T+ZTJM+StmLmdmlVu+g4v6UI=
   dependencies:
     semver-compare "^1.0.0"
 
