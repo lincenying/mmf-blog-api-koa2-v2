@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon bin/run",
-    "koa": "./node_modules/.bin/runkoa bin/www",
+    "serve": "./node_modules/.bin/nodemon bin/www",
+    "start": "node bin/www",
     "pm2": "pm2 start bin/run",
     "lint": "eslint --ext .js server/ --fix"
   },
@@ -32,8 +32,7 @@
     "mongoose": "^5.6.9",
     "mongoose-autopopulate": "^0.9.1",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4",
-    "runkoa": "^1.5.2"
+    "request-promise": "^4.2.4"
   },
   "devDependencies": {
     "eslint-config-lcy-js": "^3.0.8",
@@ -47,7 +46,7 @@
     "should": "^13.2.3"
   },
   "engines": {
-    "node": ">= 8.0.0",
+    "node": ">= 8.6.0",
     "npm": ">= 5.0.0"
   },
   "browserslist": [

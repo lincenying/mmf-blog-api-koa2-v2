@@ -1,7 +1,17 @@
 const router = require('koa-router')()
 
 const multer = require('koa-multer')
-const upload = multer({ dest: 'uploads/' }).single('file')
+
+const storage = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, './uploads')
+    },
+    filename(req, file, cb) {
+        const ext = file.originalname.split('.').pop()
+        cb(null, 'shihua-' + Date.now() + '.' + ext)
+    }
+})
+const upload = multer({ storage }).single('file')
 
 const cors = require('../middlewares/cors')
 

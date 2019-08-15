@@ -1,6 +1,5 @@
 const path = require('path')
 const Koa = require('koa')
-const app = new Koa()
 const router = require('koa-router')()
 const views = require('koa-views')
 const convert = require('koa-convert')
@@ -19,6 +18,7 @@ require('./server/models/shihua')
 
 const index = require('./server/routes/index')
 
+const app = new Koa()
 // middlewares
 app.use(convert(bodyparser))
 app.use(convert(json()))
@@ -26,24 +26,6 @@ app.use(convert(logger()))
 app.use(convert(require('koa-static')(path.join(__dirname, 'public'))))
 
 app.use(views(path.join(__dirname, 'views'), { extension: 'ejs' }))
-
-// logger
-app.use(async (ctx, next) => {
-    const start = new Date()
-    await next()
-    const ms = new Date() - start
-    console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
-    if (ctx.status === 404) {
-        const err = new Error('Not Found')
-        err.status = 404
-        ctx.body = {
-            tag: 'error',
-            status: err.status,
-            message: err.message,
-            stack: err.stack
-        }
-    }
-})
 
 app.use(require('./server/middlewares/return'))
 
