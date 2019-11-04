@@ -29,7 +29,7 @@
     "marked": "^0.7.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.6.9",
+    "mongoose": "^5.7.5",
     "mongoose-autopopulate": "^0.9.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"
