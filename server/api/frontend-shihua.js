@@ -59,14 +59,20 @@ exports.shihua = async ctx => {
                     fs.unlinkSync('./uploads/' + img_id)
                 }
             }
-            return shihuaResult
+            return {
+                success: true,
+                data: shihuaResult
+            }
         } catch (error) {
-            return null
+            return {
+                success: false,
+                message: error.message
+            }
         }
     }
 
     if (isLogin) {
-        Shihua.findOneAsync({ img_id, user_id: userid }).then(result => {
+        Shihua.findOneAsync({ img_id, user_id: userid }).then(async result => {
             if (result) {
                 ctx.success({}, '', {
                     code: 200,
@@ -75,32 +81,34 @@ exports.shihua = async ctx => {
                     result: JSON.parse(result.result)
                 })
             } else {
-                getData().then(data => {
-                    if (data) {
-                        ctx.success({}, '', {
-                            code: 200,
-                            from: 'api',
-                            userid,
-                            ...data
-                        })
-                    } else {
-                        ctx.error(null, '读取数据失败', { userid })
-                    }
-                })
+                let data = await getData()
+                if (!data.success) data = await getData()
+                if (!data.success) data = await getData()
+                if (data.success) {
+                    ctx.success({}, '', {
+                        code: 200,
+                        from: 'api',
+                        userid,
+                        ...data.data
+                    })
+                } else {
+                    ctx.error(null, data.message || '读取数据失败', { userid })
+                }
             }
         })
     } else {
-        getData().then(data => {
-            if (data) {
-                ctx.success({}, '', {
-                    code: 200,
-                    from: 'api',
-                    ...data
-                })
-            } else {
-                ctx.error({}, '读取数据失败')
-            }
-        })
+        let data = await getData()
+        if (!data.success) data = await getData()
+        if (!data.success) data = await getData()
+        if (data.success) {
+            ctx.success({}, '', {
+                code: 200,
+                from: 'api',
+                ...data.data
+            })
+        } else {
+            ctx.error({}, data.message || '读取数据失败')
+        }
     }
 }
 
