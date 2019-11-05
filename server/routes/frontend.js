@@ -47,7 +47,7 @@ router.post('/user/login', frontendUser.login)
 router.post('/user/jscode2session', frontendUser.jscode2session)
 router.post('/user/wxLogin', frontendUser.wxLogin)
 // 前台退出
-router.post('/user/logout', isUser, frontendUser.logout)
+router.post('/user/logout', frontendUser.logout)
 // 前台账号读取
 router.get('/user/account', isUser, frontendUser.getItem)
 // 前台账号修改
@@ -70,6 +70,7 @@ router.get('/shihua/history/delete', cors, frontendShihua.delHistory)
 router.get('/weibo/get', cors, frontendWeiBo.get)
 router.get('/weibo/card', cors, frontendWeiBo.card)
 router.get('/weibo/video', cors, frontendWeiBo.video)
+router.get('/weibo/beauty-video', cors, frontendWeiBo.beautyVideo)
 router.get('/weibo/detail', cors, frontendWeiBo.detail)
 router.get('/weibo/check', cors, frontendWeiBo.checkUpdate)
 // ------ 代理测试 ------
