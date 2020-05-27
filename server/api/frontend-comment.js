@@ -66,11 +66,7 @@ exports.getList = async ctx => {
         }
         try {
             const [list, total] = await Promise.all([
-                Comment.find(data)
-                    .sort('-_id')
-                    .skip(skip)
-                    .limit(limit)
-                    .exec(),
+                Comment.find(data).sort('-_id').skip(skip).limit(limit).exec(),
                 Comment.countDocumentsAsync(data)
             ])
             const totalPage = Math.ceil(total / limit)

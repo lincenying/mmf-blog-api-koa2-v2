@@ -33,7 +33,7 @@ app.use(proxy(app))
 
 app.use(index.routes(), router.allowedMethods())
 
-app.on('error', function(err, ctx) {
+app.on('error', function (err, ctx) {
     console.error('server error', err, ctx)
 })
 

@@ -40,14 +40,7 @@ exports.getList = async ctx => {
     }
 
     try {
-        const [list, total] = await Promise.all([
-            Article.find(data)
-                .sort(sort)
-                .skip(skip)
-                .limit(limit)
-                .exec(),
-            Article.countDocumentsAsync(data)
-        ])
+        const [list, total] = await Promise.all([Article.find(data).sort(sort).skip(skip).limit(limit).exec(), Article.countDocumentsAsync(data)])
         const totalPage = Math.ceil(total / limit)
         const user_id = ctx.cookies.get('userid') || ctx.header['userid']
         const tmpData = {
@@ -112,10 +105,7 @@ exports.getTrending = async ctx => {
     const limit = 5
     const data = { is_delete: 0 }
     try {
-        const result = await Article.find(data)
-            .sort('-visit')
-            .limit(limit)
-            .exec()
+        const result = await Article.find(data).sort('-visit').limit(limit).exec()
         ctx.success({
             list: result
         })

@@ -15,15 +15,7 @@ exports.list = async (ctx, mongoDB, sort) => {
     if (!limit) limit = 10
     var skip = (page - 1) * limit
     try {
-        const [list, total] = await Promise.all([
-            mongoDB
-                .find()
-                .sort(sort)
-                .skip(skip)
-                .limit(limit)
-                .exec(),
-            mongoDB.countDocumentsAsync()
-        ])
+        const [list, total] = await Promise.all([mongoDB.find().sort(sort).skip(skip).limit(limit).exec(), mongoDB.countDocumentsAsync()])
         var totalPage = Math.ceil(total / limit)
         ctx.success({
             list,

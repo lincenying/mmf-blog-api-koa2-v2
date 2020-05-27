@@ -1,26 +1,9 @@
 const router = require('koa-router')()
 
-const multer = require('koa-multer')
-
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, './uploads')
-    },
-    filename(req, file, cb) {
-        const ext = file.originalname.split('.').pop()
-        cb(null, 'shihua-' + Date.now() + '.' + ext)
-    }
-})
-const upload = multer({ storage }).single('file')
-
-const cors = require('../middlewares/cors')
-
 const frontendArticle = require('../api/frontend-article')
 const frontendComment = require('../api/frontend-comment')
 const frontendLike = require('../api/frontend-like')
 const frontendUser = require('../api/frontend-user')
-const frontendShihua = require('../api/frontend-shihua')
-const frontendWeiBo = require('../api/frontend-weibo')
 const frontendProxy = require('../api/proxy')
 const isUser = require('../middlewares/user')
 
@@ -61,18 +44,7 @@ router.get('/like', isUser, frontendLike.like)
 router.get('/unlike', isUser, frontendLike.unlike)
 // 重置喜欢
 router.get('/reset/like', isUser, frontendLike.resetLike)
-// ------ 识花 ------
-router.post('/shihua/upload', cors, upload, frontendShihua.upload)
-router.get('/shihua/get', cors, frontendShihua.shihua)
-router.get('/shihua/history/list', cors, frontendShihua.getHistory)
-router.get('/shihua/history/delete', cors, frontendShihua.delHistory)
-// ------ 微博 ------
-router.get('/weibo/get', cors, frontendWeiBo.get)
-router.get('/weibo/card', cors, frontendWeiBo.card)
-router.get('/weibo/video', cors, frontendWeiBo.video)
-router.get('/weibo/beauty-video', cors, frontendWeiBo.beautyVideo)
-router.get('/weibo/detail', cors, frontendWeiBo.detail)
-router.get('/weibo/check', cors, frontendWeiBo.checkUpdate)
+
 // ------ 代理测试 ------
 router.get('/proxy', frontendProxy.getProxyList)
 

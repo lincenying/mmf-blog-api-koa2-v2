@@ -2,7 +2,6 @@
 
 const querystring = require('querystring')
 const url_opera = require('url')
-const raven = require('raven')
 const request = require('./request')
 
 // 用以缓存当前 github:post:/test/test 到真实URL的分析结果
@@ -24,11 +23,6 @@ module.exports = function proxy(app, api, config, options) {
     api = api || {}
     config = config || {}
     options = options || {}
-
-    if (options.dsn) {
-        ravenClient = new raven.Client(options.dsn)
-        delete options.dsn
-    }
 
     /**
      * 将api配置和path拼合成一个真正的URL
@@ -248,7 +242,7 @@ module.exports = function proxy(app, api, config, options) {
         return
     }
 
-    return async function(ctx, next) {
+    return async function (ctx, next) {
         if (ctx.proxy) return await next()
 
         // 如果配置了allowShowApi而且页面的URL以__data__结尾则命中debug模式

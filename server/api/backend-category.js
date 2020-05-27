@@ -16,9 +16,7 @@ const deletes = general.deletes
  */
 exports.getList = async ctx => {
     try {
-        const result = await Category.find()
-            .sort('-cate_order')
-            .exec()
+        const result = await Category.find().sort('-cate_order').exec()
         ctx.success({
             list: result
         })
