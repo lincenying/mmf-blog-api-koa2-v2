@@ -19,7 +19,7 @@ const { list, item, modify, deletes, recover } = general
  * @return {[type]}     [description]
  */
 exports.getList = async ctx => {
-    await list(ctx, Admin)
+    await list.call(Admin, ctx)
 }
 
 /**
@@ -29,7 +29,7 @@ exports.getList = async ctx => {
  * @return {[type]}     [description]
  */
 exports.getItem = async ctx => {
-    await item(ctx, Admin)
+    await item.call(Admin, ctx)
 }
 
 /**
@@ -41,29 +41,27 @@ exports.getItem = async ctx => {
 exports.login = async ctx => {
     const { password, username } = ctx.request.body
     if (username === '' || password === '') {
-        ctx.error(null, '请输入用户名和密码')
-        return
+        return ctx.json({ code: -200, message: '请输入用户名和密码' })
     }
     try {
-        const result = await Admin.findOneAsync({
+        const result = await Admin.findOne({
             username,
             password: md5(md5Pre + password),
             is_delete: 0
         })
         if (result) {
+            const _username = encodeURI(username)
             const id = result._id
             const remember_me = 2592000000
-            const _username = encodeURI(username)
             const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('b_user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('b_userid', id, { maxAge: remember_me })
             ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
-            ctx.success(token, '登录成功')
-        } else {
-            ctx.error(null, '用户名或者密码错误')
+            return ctx.json({ code: 200, message: '登录成功', data: token })
         }
-    } catch (err) {
-        ctx.error(null, err.toString())
+        return ctx.json({ code: -200, message: '用户名或者密码错误' })
+    } catch (error) {
+        ctx.json({ code: -200, message: error.toString() })
     }
 }
 
@@ -114,10 +112,13 @@ exports.insert = async ctx => {
  */
 exports.modify = async ctx => {
     const { id, email, password, username } = ctx.request.body
-    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
-    const data = { email, username, update_date }
+    var data = {
+        email,
+        username,
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
+    }
     if (password) data.password = md5(md5Pre + password)
-    await modify(ctx, Admin, id, data)
+    await modify.call(Admin, ctx, id, data)
 }
 
 /**
@@ -127,7 +128,7 @@ exports.modify = async ctx => {
  * @return {[type]}        [description]
  */
 exports.deletes = async ctx => {
-    await deletes(ctx, Admin)
+    await deletes.call(Admin, ctx)
 }
 
 /**
@@ -137,5 +138,5 @@ exports.deletes = async ctx => {
  * @return {[type]}        [description]
  */
 exports.recover = async ctx => {
-    await recover(ctx, Admin)
+    await recover.call(Admin, ctx)
 }

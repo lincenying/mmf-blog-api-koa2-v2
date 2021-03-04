@@ -1,17 +1,44 @@
 const moment = require('moment')
+const markdownIt = require('markdown-it')
+const markdownItTocAndAnchor = require('markdown-it-toc-and-anchor').default
+const hljs = require('highlight.js')
+
 const mongoose = require('../mongoose')
 const Article = mongoose.model('Article')
 const Category = mongoose.model('Category')
 const general = require('./general')
-const { list, item } = general
-const marked = require('marked')
-const hljs = require('highlight.js')
-marked.setOptions({
-    highlight(code) {
-        return hljs.highlightAuto(code).value
-    },
-    breaks: true
-})
+
+const list = general.list
+const item = general.item
+
+const marked = md => {
+    const $return = {
+        html: '',
+        toc: ''
+    }
+    const html = markdownIt({
+        breaks: true,
+        html: true,
+        linkify: true,
+        typographer: true,
+        highlight(str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(lang, str).value
+                } catch (error) {}
+            }
+            return ''
+        }
+    })
+        .use(markdownItTocAndAnchor, {
+            tocCallback(tocMarkdown, tocArray, tocHtml) {
+                $return.toc = tocHtml
+            }
+        })
+        .render(md)
+    $return.html = html
+    return $return
+}
 
 /**
  * 管理时, 获取文章列表
@@ -20,7 +47,7 @@ marked.setOptions({
  * @return {[type]}     [description]
  */
 exports.getList = async ctx => {
-    await list(ctx, Article, '-update_date')
+    await list.call(Article, ctx, '-update_date')
 }
 
 /**
@@ -30,7 +57,7 @@ exports.getList = async ctx => {
  * @return {[type]}     [description]
  */
 exports.getItem = async ctx => {
-    await item(ctx, Article)
+    await item.call(Article, ctx)
 }
 
 /**
@@ -41,7 +68,9 @@ exports.getItem = async ctx => {
  */
 exports.insert = async ctx => {
     const { category, content, title } = ctx.request.body
-    const html = marked(content)
+    const md = marked(content)
+    const html = md.html
+    const toc = md.toc
     const arr_category = category.split('|')
     const data = {
         title,
@@ -49,6 +78,7 @@ exports.insert = async ctx => {
         category_name: arr_category[1],
         content,
         html,
+        toc,
         visit: 0,
         like: 0,
         comment_count: 0,
@@ -58,11 +88,11 @@ exports.insert = async ctx => {
         timestamp: moment().format('X')
     }
     try {
-        const result = await Article.createAsync(data)
-        await Category.updateOneAsync({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
-        ctx.success(result, '发布成功')
+        const result = await Article.create(data)
+        await Category.updateOne({ _id: arr_category[0] }, { $inc: { cate_num: 1 } })
+        ctx.json({ code: 200, message: '发布成功', data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -75,11 +105,11 @@ exports.insert = async ctx => {
 exports.deletes = async ctx => {
     const _id = ctx.query.id
     try {
-        await Article.updateOneAsync({ _id }, { is_delete: 1 })
-        await Category.updateOneAsync({ _id }, { $inc: { cate_num: -1 } })
-        ctx.success('success', '更新成功')
+        const result = await Article.updateOne({ _id }, { is_delete: 1 })
+        await Category.updateOne({ _id }, { $inc: { cate_num: -1 } })
+        ctx.json({ code: 200, message: '更新成功', data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -92,11 +122,11 @@ exports.deletes = async ctx => {
 exports.recover = async ctx => {
     const _id = ctx.query.id
     try {
-        await Article.updateOneAsync({ _id }, { is_delete: 0 })
-        await Category.updateOneAsync({ _id }, { $inc: { cate_num: 1 } })
-        ctx.success('success', '更新成功')
+        const result = await Article.updateOne({ _id }, { is_delete: 0 })
+        await Category.updateOne({ _id }, { $inc: { cate_num: 1 } })
+        ctx.json({ code: 200, message: '更新成功', data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -107,19 +137,29 @@ exports.recover = async ctx => {
  * @return {[type]}     [description]
  */
 exports.modify = async ctx => {
-    const { id, title, category, category_name, category_old, content } = ctx.request.body
-    const html = marked(content)
-    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
+    const { id, category, category_old, content, title, category_name } = ctx.request.body
+    const md = marked(content)
+    const html = md.html
+    const toc = md.toc
+    const data = {
+        title,
+        category,
+        category_name,
+        content,
+        html,
+        toc,
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
+    }
     try {
-        const result = await Article.findOneAndUpdateAsync({ _id: id }, { category, category_name, content, html, title, update_date }, { new: true })
+        const result = await Article.findOneAndUpdate({ _id: id }, data, { new: true })
         if (category !== category_old) {
             await Promise.all([
-                Category.updateOneAsync({ _id: category }, { $inc: { cate_num: 1 } }),
-                Category.updateOneAsync({ _id: category_old }, { $inc: { cate_num: -1 } })
+                Category.updateOne({ _id: category }, { $inc: { cate_num: 1 } }),
+                Category.updateOne({ _id: category_old }, { $inc: { cate_num: -1 } })
             ])
         }
-        ctx.success(result, '更新成功')
+        ctx.json({ code: 200, message: '更新成功', data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }

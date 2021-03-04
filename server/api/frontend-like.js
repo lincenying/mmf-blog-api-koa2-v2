@@ -5,30 +5,32 @@ exports.like = async ctx => {
     const article_id = ctx.query.id
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     try {
-        await Article.updateOneAsync({ _id: article_id }, { $inc: { like: 1 }, $push: { likes: user_id } })
-        ctx.success('success', '更新成功')
+        await Article.updateOne({ _id: article_id }, { $inc: { like: 1 }, $push: { likes: user_id } })
+        ctx.json({ code: 200, message: '操作成功', data: 'success' })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 exports.unlike = async ctx => {
     const article_id = ctx.query.id
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     try {
-        await Article.updateOneAsync({ _id: article_id }, { $inc: { like: -1 }, $pull: { likes: user_id } })
-        ctx.success('success', '更新成功')
+        Article.updateOne({ _id: article_id }, { $inc: { like: -1 }, $pull: { likes: user_id } })
+        ctx.json({ code: 200, message: '操作成功', data: 'success' })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 exports.resetLike = async ctx => {
     try {
         const result = await Article.find().exec()
-        result.forEach(item => {
-            Article.findOneAndUpdateAsync({ _id: item._id }, { like: item.likes.length }, { new: true })
-        })
-        ctx.success('success', '更新成功')
+        const length = result.length
+        for (let i = 0; i < length; i++) {
+            const item = result[i]
+            await Article.findOneAndUpdate({ _id: item._id }, { like: item.likes.length }, { new: true })
+        }
+        ctx.json({ code: 200, message: '操作成功', data: 'success' })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }

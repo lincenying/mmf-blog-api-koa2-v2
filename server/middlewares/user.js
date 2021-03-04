@@ -3,8 +3,7 @@ const check = require('./check')
 module.exports = async (ctx, next) => {
     const token = ctx.cookies.get('user') || ctx.header['user']
     const userid = ctx.cookies.get('userid') || ctx.header['userid']
-    let username = ctx.cookies.get('username') || ctx.header['username'] || ''
-    username = new Buffer(username, 'base64').toString()
+    const username = ctx.cookies.get('username') || ctx.header['username'] || ''
     if (token) {
         const decoded = await check(token, 'user')
         if (decoded && decoded.id === userid && decoded.username === username) {

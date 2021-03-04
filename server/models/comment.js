@@ -1,7 +1,7 @@
+const mongooseAutopopulate = require('mongoose-autopopulate')
+
 const mongoose = require('../mongoose')
 const Schema = mongoose.Schema
-const Promise = require('bluebird')
-const mongooseAutopopulate = require('mongoose-autopopulate')
 
 const CommentSchema = new Schema({
     article_id: String,
@@ -12,9 +12,7 @@ const CommentSchema = new Schema({
     timestamp: Number
 })
 
-const Comment = mongoose.model('Comment', CommentSchema)
 CommentSchema.plugin(mongooseAutopopulate)
-Promise.promisifyAll(Comment)
-Promise.promisifyAll(Comment.prototype)
+const Comment = mongoose.model('Comment', CommentSchema)
 
 module.exports = Comment

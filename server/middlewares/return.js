@@ -15,5 +15,8 @@ module.exports = async (ctx, next) => {
             ...other
         }
     }
+    ctx.json = payload => {
+        ctx.body = payload
+    }
     await next()
 }

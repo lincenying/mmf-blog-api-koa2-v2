@@ -16,7 +16,7 @@ const general = require('./general')
 const { list, modify, deletes, recover } = general
 
 exports.getList = async ctx => {
-    await list(ctx, User)
+    await list.call(User, ctx)
 }
 
 /**
@@ -26,36 +26,47 @@ exports.getList = async ctx => {
  * @return {[type]}       [description]
  */
 exports.login = async ctx => {
-    const { username, password } = ctx.request.body
+    let { username } = ctx.request.body
+    const { password } = ctx.request.body
     if (username === '' || password === '') {
-        ctx.error(null, '请输入用户名和密码')
+        ctx.json({ code: -200, message: '请输入用户名和密码' })
     }
     try {
-        const result = await User.findOneAsync({ username, password: md5(md5Pre + password), is_delete: 0 })
+        let json = {}
+        const result = await User.findOne({
+            username,
+            password: md5(md5Pre + password),
+            is_delete: 0
+        })
         if (result) {
+            username = encodeURI(username)
             const id = result._id
             const email = result.email
             const remember_me = 2592000000
-            const _username = encodeURI(username)
-            const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
+            const token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('userid', id, { maxAge: remember_me, httpOnly: false })
-            ctx.cookies.set('username', new Buffer(_username).toString('base64'), { maxAge: remember_me, httpOnly: false })
+            ctx.cookies.set('username', username, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('useremail', email, { maxAge: remember_me, httpOnly: false })
-            ctx.success(
-                {
+            json = {
+                code: 200,
+                message: '登录成功',
+                data: {
                     user: token,
                     userid: id,
-                    username: _username,
+                    username,
                     email
-                },
-                '登录成功'
-            )
+                }
+            }
         } else {
-            ctx.error(null, '用户名或者密码错误')
+            json = {
+                code: -200,
+                message: '用户名或者密码错误'
+            }
         }
+        ctx.json(json)
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -75,7 +86,7 @@ exports.jscode2session = async ctx => {
             grant_type: 'authorization_code'
         }
     })
-    ctx.success(xhr.data, '登录成功')
+    ctx.json({ code: 200, message: '登录成功', data: xhr.data })
 }
 /**
  * 微信登录
@@ -84,13 +95,15 @@ exports.jscode2session = async ctx => {
  * @return {[type]}       [description]
  */
 exports.wxLogin = async ctx => {
-    let id, token, username
     const { nickName, wxSignature, avatar } = ctx.request.body
+
+    let id, token, username
     if (!nickName || !wxSignature) {
-        ctx.error(null, '参数有误, 微信登录失败')
+        ctx.json({ code: -200, message: '参数有误, 微信登录失败' })
     } else {
         try {
-            const result = await User.findOneAsync({
+            let json = {}
+            const result = await User.findOne({
                 username: nickName,
                 wx_signature: wxSignature,
                 is_delete: 0
@@ -99,16 +112,18 @@ exports.wxLogin = async ctx => {
                 id = result._id
                 username = encodeURI(nickName)
                 token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
-                ctx.success(
-                    {
+                json = {
+                    code: 200,
+                    message: '登录成功',
+                    data: {
                         user: token,
                         userid: id,
                         username
-                    },
-                    '登录成功'
-                )
+                    }
+                }
+                ctx.json(json)
             } else {
-                const _result = await User.createAsync({
+                const _result = await User.create({
                     username: nickName,
                     password: '',
                     email: '',
@@ -122,17 +137,18 @@ exports.wxLogin = async ctx => {
                 id = _result._id
                 username = encodeURI(nickName)
                 token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
-                ctx.success(
-                    {
+                ctx.json({
+                    code: 200,
+                    message: '注册成功!',
+                    data: {
                         user: token,
                         userid: id,
                         username
-                    },
-                    '注册成功'
-                )
+                    }
+                })
             }
         } catch (err) {
-            ctx.error(null, err.toString())
+            ctx.json({ code: -200, message: err.toString() })
         }
     }
 }
@@ -148,7 +164,7 @@ exports.logout = async ctx => {
     ctx.cookies.set('userid', '', { maxAge: -1, httpOnly: false })
     ctx.cookies.set('username', '', { maxAge: -1, httpOnly: false })
     ctx.cookies.set('useremail', '', { maxAge: -1, httpOnly: false })
-    ctx.success('', '退出成功')
+    ctx.json({ code: 200, message: '退出成功', data: '' })
 }
 
 /**
@@ -160,18 +176,18 @@ exports.logout = async ctx => {
 exports.insert = async ctx => {
     const { email, password, username } = ctx.request.body
     if (!username || !password || !email) {
-        ctx.error(null, '请将表单填写完整')
+        ctx.json({ code: -200, message: '请将表单填写完整' })
     } else if (strlen(username) < 4) {
-        ctx.error(null, '用户长度至少 2 个中文或 4 个英文')
+        ctx.json({ code: -200, message: '用户长度至少 2 个中文或 4 个英文' })
     } else if (strlen(password) < 8) {
-        ctx.error(null, '密码长度至少 8 位')
+        ctx.json({ code: -200, message: '密码长度至少 8 位' })
     } else {
         try {
-            const result = await User.findOneAsync({ username })
+            const result = await User.findOne({ username })
             if (result) {
-                ctx.error(null, '该用户名已经存在')
+                ctx.json({ code: -200, message: '该用户名已经存在!' })
             } else {
-                await User.createAsync({
+                await User.create({
                     username,
                     password: md5(md5Pre + password),
                     email,
@@ -180,10 +196,10 @@ exports.insert = async ctx => {
                     is_delete: 0,
                     timestamp: moment().format('X')
                 })
-                ctx.success('success', '注册成功')
+                ctx.json({ code: 200, message: '注册成功!', data: 'success' })
             }
         } catch (err) {
-            ctx.error(null, err.toString())
+            ctx.json({ code: -200, message: err.toString() })
         }
     }
 }
@@ -191,14 +207,19 @@ exports.insert = async ctx => {
 exports.getItem = async ctx => {
     const userid = ctx.query.id || ctx.cookies.get('userid') || ctx.header['userid']
     try {
-        const result = await User.findOneAsync({ _id: userid, is_delete: 0 })
+        let json
+        const result = await User.findOne({
+            _id: userid,
+            is_delete: 0
+        })
         if (result) {
-            ctx.success(result)
+            json = { code: 200, data: result }
         } else {
-            ctx.error(null, '请先登录, 或者数据错误')
+            json = { code: -200, message: '请先登录, 或者数据错误' }
         }
+        ctx.json(json)
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -210,10 +231,13 @@ exports.getItem = async ctx => {
  */
 exports.modify = async ctx => {
     const { id, email, password, username } = ctx.request.body
-    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
-    const data = { email, username, update_date }
+    const data = {
+        email,
+        username,
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
+    }
     if (password) data.password = md5(md5Pre + password)
-    await modify(ctx, User, id, data)
+    await modify.call(User, ctx, id, data)
 }
 
 /**
@@ -248,22 +272,25 @@ exports.account = async ctx => {
  */
 exports.password = async ctx => {
     const { id, old_password, password } = ctx.request.body
-    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     if (user_id === id) {
         try {
-            const result = await User.findOneAsync({ _id: id, password: md5(md5Pre + old_password), is_delete: 0 })
+            const result = await User.findOne({
+                _id: id,
+                password: md5(md5Pre + old_password),
+                is_delete: 0
+            })
             if (result) {
-                await User.updateOneAsync({ _id: id }, { $set: { password: md5(md5Pre + password), update_date } })
-                ctx.success('success', '更新成功')
+                await User.updateOne({ _id: id }, { $set: { password: md5(md5Pre + password) } })
+                ctx.json({ code: 200, message: '更新成功', data: 'success' })
             } else {
-                ctx.error(null, '原始密码错误')
+                ctx.json({ code: -200, message: '原始密码错误' })
             }
         } catch (err) {
-            ctx.error(null, err.toString())
+            ctx.json({ code: -200, message: err.toString() })
         }
     } else {
-        ctx.error(null, '当前没有权限')
+        ctx.json({ code: -200, message: '当前没有权限' })
     }
 }
 
@@ -275,7 +302,7 @@ exports.password = async ctx => {
  * @return {[type]}        [description]
  */
 exports.deletes = async ctx => {
-    await deletes(ctx, User)
+    await deletes.call(User, ctx)
 }
 
 /**
@@ -286,5 +313,5 @@ exports.deletes = async ctx => {
  * @return {[type]}        [description]
  */
 exports.recover = async ctx => {
-    await recover(ctx, User)
+    await recover.call(User, ctx)
 }

@@ -3,10 +3,7 @@ const mongoose = require('../mongoose')
 const Category = mongoose.model('Category')
 const general = require('./general')
 
-const item = general.item
-const modify = general.modify
-const recover = general.recover
-const deletes = general.deletes
+const { item, modify, deletes, recover } = general
 
 /**
  * 管理时, 获取分类列表
@@ -17,25 +14,29 @@ const deletes = general.deletes
 exports.getList = async ctx => {
     try {
         const result = await Category.find().sort('-cate_order').exec()
-        ctx.success({
-            list: result
-        })
+        const json = {
+            code: 200,
+            data: {
+                list: result
+            }
+        }
+        ctx.json(json)
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
 exports.getItem = async ctx => {
-    await item(ctx, Category)
+    await item.call(Category, ctx)
 }
 
 exports.insert = async ctx => {
     const { cate_name, cate_order } = ctx.request.body
     if (!cate_name || !cate_order) {
-        ctx.error(null, '请填写分类名称和排序')
+        ctx.json({ code: -200, message: '请填写分类名称和排序' })
     } else {
         try {
-            const result = await Category.createAsync({
+            const result = await Category.create({
                 cate_name,
                 cate_order,
                 creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -43,23 +44,26 @@ exports.insert = async ctx => {
                 is_delete: 0,
                 timestamp: moment().format('X')
             })
-            ctx.success(result._id, '添加成功')
+            ctx.json({ code: 200, message: '添加成功', data: result._id })
         } catch (err) {
-            ctx.error(null, err.toString())
+            ctx.json({ code: -200, message: err.toString() })
         }
     }
 }
 
 exports.deletes = async ctx => {
-    await deletes(ctx, Category)
+    await deletes.call(Category, ctx)
 }
 
 exports.recover = async ctx => {
-    await recover(ctx, Category)
+    await recover.call(Category, ctx)
 }
 
 exports.modify = async ctx => {
     const { id, cate_name, cate_order } = ctx.request.body
-    const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
-    await modify(ctx, Category, id, { cate_name, cate_order, update_date })
+    await modify.call(Category, ctx, id, {
+        cate_name,
+        cate_order,
+        update_date: moment().format('YYYY-MM-DD HH:mm:ss')
+    })
 }

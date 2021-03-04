@@ -6,25 +6,30 @@
  * @param  {[type]} sort    排序
  * @return {[type]}         [description]
  */
-exports.list = async (ctx, mongoDB, sort) => {
-    sort = sort || '-_id'
+exports.list = async function (ctx, sort) {
     let { limit, page } = ctx.query
+    sort = sort || '-_id'
     page = parseInt(page, 10)
     limit = parseInt(limit, 10)
     if (!page) page = 1
     if (!limit) limit = 10
-    var skip = (page - 1) * limit
+    const skip = (page - 1) * limit
     try {
-        const [list, total] = await Promise.all([mongoDB.find().sort(sort).skip(skip).limit(limit).exec(), mongoDB.countDocumentsAsync()])
-        var totalPage = Math.ceil(total / limit)
-        ctx.success({
-            list,
-            total,
-            hasNext: totalPage > page ? 1 : 0,
-            hasPrev: page > 1 ? 1 : 0
-        })
+        const result = await Promise.all([this.find().sort(sort).skip(skip).limit(limit).exec(), this.countDocuments()])
+        const total = result[1]
+        const totalPage = Math.ceil(total / limit)
+        const json = {
+            code: 200,
+            data: {
+                list: result[0],
+                total,
+                hasNext: totalPage > page ? 1 : 0,
+                hasPrev: page > 1 ? 1 : 0
+            }
+        }
+        ctx.json(json)
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -35,17 +40,17 @@ exports.list = async (ctx, mongoDB, sort) => {
  * @param  {[type]} mongoDB [description]
  * @return {[type]}         [description]
  */
-exports.item = async (ctx, mongoDB) => {
+exports.item = async function (ctx) {
     const _id = ctx.query.id
     if (!_id) {
-        ctx.error(null, '参数错误')
+        ctx.json({ code: -200, message: '参数错误' })
         return
     }
     try {
-        const result = await mongoDB.findOneAsync({ _id })
-        ctx.success(result)
+        const result = await this.findOne({ _id })
+        ctx.json({ code: 200, data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -56,13 +61,13 @@ exports.item = async (ctx, mongoDB) => {
  * @param  {[type]} mongoDB [description]
  * @return {[type]}         [description]
  */
-exports.deletes = async (ctx, mongoDB) => {
+exports.deletes = async function (ctx) {
     const _id = ctx.query.id
     try {
-        await mongoDB.updateOneAsync({ _id }, { is_delete: 1 })
-        ctx.success('success', '更新成功')
+        await this.updateOne({ _id }, { is_delete: 1 })
+        ctx.json({ code: 200, message: '更新成功', data: 'success' })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -75,12 +80,12 @@ exports.deletes = async (ctx, mongoDB) => {
  * @param  {[type]} data    [description]
  * @return {[type]}         [description]
  */
-exports.modify = async (ctx, mongoDB, _id, data) => {
+exports.modify = async function (ctx, _id, data) {
     try {
-        const result = await mongoDB.findOneAndUpdateAsync({ _id }, data, { new: true })
-        ctx.success(result, '更新成功')
+        const result = await this.findOneAndUpdate({ _id }, data, { new: true })
+        ctx.json({ code: 200, message: '更新成功', data: result })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
@@ -91,12 +96,12 @@ exports.modify = async (ctx, mongoDB, _id, data) => {
  * @param  {[type]} mongoDB [description]
  * @return {[type]}         [description]
  */
-exports.recover = async (ctx, mongoDB) => {
+exports.recover = async function (ctx) {
     const _id = ctx.query.id
     try {
-        await mongoDB.updateOneAsync({ _id }, { is_delete: 0 })
-        ctx.success('success', '更新成功')
+        await this.updateOne({ _id }, { is_delete: 0 })
+        ctx.json({ code: 200, message: '更新成功', data: 'success' })
     } catch (err) {
-        ctx.error(null, err.toString())
+        ctx.json({ code: -200, message: err.toString() })
     }
 }

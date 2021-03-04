@@ -1,4 +1,5 @@
 const fs = require('fs')
+
 const fsExistsSync = path => {
     try {
         fs.accessSync(path, fs.F_OK)
@@ -23,17 +24,36 @@ exports.strlen = str => {
 
 exports.creatSecret = () => {
     if (!fsExistsSync('./server/config/secret.js')) {
-        const secretServer = Math.random() * 1000000
-        const secretClient = Math.random() * 1000000
-        const secret = `exports.secretServer = '${secretServer}'
-exports.secretClient = '${secretClient}'`
-        fs.writeFileSync('./server/config/secret.js', secret)
+        const secretServer1 = Math.random() * 1000000
+        const secretClient1 = Math.random() * 1000000
+        const secret1 = `exports.secretServer = '${secretServer1}'
+exports.secretClient = '${secretClient1}'`
+        fs.writeFileSync('./server/config/secret.js', secret1)
     }
 }
+
 exports.creatMpApp = () => {
     if (!fsExistsSync('./server/config/mpapp.js')) {
         const secret = `exports.apiId = ''
 exports.secret = ''`
         fs.writeFileSync('./server/config/mpapp.js', secret)
+    }
+}
+
+exports.creatShiHua = () => {
+    if (!fsExistsSync('./server/config/shihua.js')) {
+        const secret = `exports.APP_ID = ''
+exports.API_KEY = ''
+exports.SECRET_KEY = ''`
+        fs.writeFileSync('./server/config/shihua.js', secret)
+    }
+}
+
+exports.creatQiNiu = () => {
+    if (!fsExistsSync('./server/config/qiniu.js')) {
+        const secret = `exports.accessKey = ''
+exports.secretKey = ''
+exports.bucket = ''`
+        fs.writeFileSync('./server/config/qiniu.js', secret)
     }
 }
