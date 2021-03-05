@@ -1,12 +1,12 @@
 .DS_Store
-.husky/
 node_modules/
 npm-debug.log
 .vscode/
 admin.lock
 server/config/secret.js
 server/config/mpapp.js
-yarn-error.log
+server/config/shihua.js
+server/config/qiniu.js
 uploads/
 
 *-port.txt

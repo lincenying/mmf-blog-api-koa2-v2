@@ -11,7 +11,7 @@ const md5Pre = config.md5Pre
 const secret = config.secretClient
 const mpappApiId = config.apiId
 const mpappSecret = config.secret
-const strlen = require('../utils').strlen
+const strLen = require('../utils').strLen
 const general = require('./general')
 const { list, modify, deletes, recover } = general
 
@@ -177,9 +177,9 @@ exports.insert = async ctx => {
     const { email, password, username } = ctx.request.body
     if (!username || !password || !email) {
         ctx.json({ code: -200, message: '请将表单填写完整' })
-    } else if (strlen(username) < 4) {
+    } else if (strLen(username) < 4) {
         ctx.json({ code: -200, message: '用户长度至少 2 个中文或 4 个英文' })
-    } else if (strlen(password) < 8) {
+    } else if (strLen(password) < 8) {
         ctx.json({ code: -200, message: '密码长度至少 8 位' })
     } else {
         try {
