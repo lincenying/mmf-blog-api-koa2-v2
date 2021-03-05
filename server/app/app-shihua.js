@@ -58,7 +58,8 @@ exports.shihua = async ctx => {
     const cdn = ctx.query.cdn
     const token = ctx.cookies.get('user') || ctx.header.user
     const userid = ctx.cookies.get('userid') || ctx.header.userid
-    const username = ctx.cookies.get('username') || ctx.header.username
+    let username = ctx.cookies.get('username') || ctx.header.username
+    username = Buffer.from(username, 'base64').toString()
     const isLogin = await checkJWT(token, userid, username, 'user')
     const getData = async () => {
         const client = new AipImageClassifyClient(shihuaConfig.APP_ID, shihuaConfig.API_KEY, shihuaConfig.SECRET_KEY)

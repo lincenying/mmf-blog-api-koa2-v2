@@ -46,7 +46,7 @@ exports.login = async ctx => {
             const token = jwt.sign({ id, username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('userid', id, { maxAge: remember_me, httpOnly: false })
-            ctx.cookies.set('username', username, { maxAge: remember_me, httpOnly: false })
+            ctx.cookies.set('username', Buffer.from(username).toString('base64'), { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('useremail', email, { maxAge: remember_me, httpOnly: false })
             json = {
                 code: 200,

@@ -56,7 +56,7 @@ exports.login = async ctx => {
             const token = jwt.sign({ id, username: _username }, secret, { expiresIn: 60 * 60 * 24 * 30 })
             ctx.cookies.set('b_user', token, { maxAge: remember_me, httpOnly: false })
             ctx.cookies.set('b_userid', id, { maxAge: remember_me })
-            ctx.cookies.set('b_username', new Buffer(_username).toString('base64'), { maxAge: remember_me })
+            ctx.cookies.set('b_username', Buffer.from(_username).toString('base64'), { maxAge: remember_me })
             return ctx.json({ code: 200, message: '登录成功', data: token })
         }
         return ctx.json({ code: -200, message: '用户名或者密码错误' })
