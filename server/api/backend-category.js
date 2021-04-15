@@ -44,7 +44,7 @@ exports.insert = async ctx => {
                 is_delete: 0,
                 timestamp: moment().format('X')
             })
-            ctx.json({ code: 200, message: '添加成功', data: result._id })
+            ctx.json({ code: 200, message: '添加成功', data: result })
         } catch (err) {
             ctx.json({ code: -200, message: err.toString() })
         }
