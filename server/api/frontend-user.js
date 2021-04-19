@@ -247,20 +247,16 @@ exports.modify = async ctx => {
  * @return {[type]}        [description]
  */
 exports.account = async ctx => {
-    const { id, email } = ctx.request.body
+    const { email } = ctx.request.body
     const update_date = moment().format('YYYY-MM-DD HH:mm:ss')
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
     // const username = ctx.request.body.username || ctx.header['username']
-    if (user_id === id) {
-        try {
-            await User.updateOneAsync({ _id: id }, { $set: { email, update_date } })
-            ctx.cookies.set('useremail', email, { maxAge: 2592000000, httpOnly: false })
-            ctx.success('success', '更新成功')
-        } catch (err) {
-            ctx.error(null, err.toString())
-        }
-    } else {
-        ctx.error(null, '当前没有权限')
+    try {
+        await User.updateOneAsync({ _id: user_id }, { $set: { email, update_date } })
+        ctx.cookies.set('useremail', email, { maxAge: 2592000000, httpOnly: false })
+        ctx.success('success', '更新成功')
+    } catch (err) {
+        ctx.error(null, err.toString())
     }
 }
 
@@ -271,26 +267,22 @@ exports.account = async ctx => {
  * @return {[type]}        [description]
  */
 exports.password = async ctx => {
-    const { id, old_password, password } = ctx.request.body
+    const { old_password, password } = ctx.request.body
     const user_id = ctx.cookies.get('userid') || ctx.header['userid']
-    if (user_id === id) {
-        try {
-            const result = await User.findOne({
-                _id: id,
-                password: md5(md5Pre + old_password),
-                is_delete: 0
-            })
-            if (result) {
-                await User.updateOne({ _id: id }, { $set: { password: md5(md5Pre + password) } })
-                ctx.json({ code: 200, message: '更新成功', data: 'success' })
-            } else {
-                ctx.json({ code: -200, message: '原始密码错误' })
-            }
-        } catch (err) {
-            ctx.json({ code: -200, message: err.toString() })
+    try {
+        const result = await User.findOne({
+            _id: user_id,
+            password: md5(md5Pre + old_password),
+            is_delete: 0
+        })
+        if (result) {
+            await User.updateOne({ _id: user_id }, { $set: { password: md5(md5Pre + password) } })
+            ctx.json({ code: 200, message: '更新成功', data: 'success' })
+        } else {
+            ctx.json({ code: -200, message: '原始密码错误' })
         }
-    } else {
-        ctx.json({ code: -200, message: '当前没有权限' })
+    } catch (err) {
+        ctx.json({ code: -200, message: err.toString() })
     }
 }
 
