@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "license": "MIT",
   "scripts": {
+    "postinstall": "husky install && husky set .husky/pre-commit 'npx lint-staged'",
     "serve": "./node_modules/.bin/nodemon bin/www",
     "start": "node bin/www",
     "pm2": "pm2 start bin/run",
@@ -14,7 +15,7 @@
     "base64-img": "^1.0.4",
     "debug": "^4.3.1",
     "ejs": "^3.1.6",
-    "highlight.js": "^10.6.0",
+    "highlight.js": "^10.7.2",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
@@ -26,22 +27,22 @@
     "koa-onerror": "^4.1.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
-    "koa-views": "^7.0.0",
-    "markdown-it": "^12.0.4",
+    "koa-views": "^7.0.1",
+    "markdown-it": "^12.0.6",
     "markdown-it-toc-and-anchor": "^4.2.0",
-    "marked": "^2.0.1",
+    "marked": "^2.0.3",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.18",
-    "mongoose-autopopulate": "^0.12.3",
+    "mongoose": "^5.12.5",
+    "mongoose-autopopulate": "^0.13.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
   },
   "devDependencies": {
     "eslint-config-lcy-js": "^3.1.1",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
-    "husky": "4.3.8",
+    "eslint-config-prettier": "^8.2.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "6.0.0",
     "lint-staged": "^10.5.4",
     "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
@@ -62,10 +63,5 @@
     "*.js": [
       "eslint --fix"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
