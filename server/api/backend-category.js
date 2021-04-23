@@ -39,6 +39,7 @@ exports.insert = async ctx => {
             const result = await Category.create({
                 cate_name,
                 cate_order,
+                cate_num: 0,
                 creat_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 update_date: moment().format('YYYY-MM-DD HH:mm:ss'),
                 is_delete: 0,
