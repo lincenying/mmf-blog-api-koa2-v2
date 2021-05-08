@@ -11,12 +11,11 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "baidu-aip-sdk": "^2.4.6",
+    "baidu-aip-sdk": "^4.15.4",
     "base64-img": "^1.0.4",
     "debug": "^4.3.1",
     "ejs": "^3.1.6",
     "highlight.js": "^10.7.2",
-    "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
@@ -24,30 +23,25 @@
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
     "koa-multer": "^1.0.2",
-    "koa-onerror": "^4.1.0",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
     "koa-views": "^7.0.1",
     "markdown-it": "^12.0.6",
     "markdown-it-toc-and-anchor": "^4.2.0",
-    "marked": "^2.0.3",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "mongoose": "^5.12.7",
     "mongoose-autopopulate": "^0.13.0",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6"
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "eslint-config-lcy-js": "^3.1.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "6.0.0",
-    "lint-staged": "^10.5.4",
+    "lint-staged": "^11.0.0",
     "nodemon": "^2.0.7",
-    "prettier": "^2.2.1",
-    "raven": "^2.6.4",
-    "should": "^13.2.3"
+    "prettier": "^2.2.1"
   },
   "engines": {
     "node": ">= 8.6.0",
